@@ -5,7 +5,8 @@ plugins {
 
 android {
     namespace = "com.example.davinciconnect"
-    compileSdk = 34   // ⚠️ 36 todavía no es estable, usa 34 para evitar errores
+    compileSdk = 35
+    // ⚠️ 36 todavía no es estable, usa 34 para evitar errores
 
     defaultConfig {
         applicationId = "com.example.davinciconnect"
