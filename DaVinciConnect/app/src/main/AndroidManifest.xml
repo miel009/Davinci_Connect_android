@@ -12,23 +12,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DaVinciConnect">
-
+        <activity
+            android:name=".ui.fragments.ProfileFragment"
+            android:exported="false" />
         <!-- SplashActivity es la primera pantalla -->
         <activity
             android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Otras Activities -->
-        <activity android:name=".ui.WelcomeActivity" android:exported="false" />
-        <activity android:name=".ui.LoginActivity" android:exported="false" />
-        <activity android:name=".ui.RegisterActivity" android:exported="false" />
-        <activity android:name=".ui.HomeActivity" android:exported="false" />
-
+        </activity> <!-- Otras Activities -->
+        <activity
+            android:name=".ui.WelcomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.HomeActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

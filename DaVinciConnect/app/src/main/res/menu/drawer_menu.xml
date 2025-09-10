@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Perfil"
+        android:icon="@drawable/ic_person"/>
+
+    <item
+        android:id="@+id/nav_darkmode"
+        android:title="Modo oscuro / claro"
+        android:icon="@drawable/ic_darkmode"/>
+
+    <item
+        android:id="@+id/nav_comments"
+        android:title="Comentarios"
+        android:icon="@drawable/ic_comment"/>
+
+    <item
+        android:id="@+id/nav_contact"
+        android:title="Contacto"
+        android:icon="@drawable/ic_contact"/>
+
+    <item
+        android:id="@+id/nav_version"
+        android:title="Versión 1.0v"
+        android:enabled="false"/>
+</menu>
