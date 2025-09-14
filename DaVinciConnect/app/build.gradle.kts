@@ -5,13 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.davinciconnect"
-    compileSdk = 35
-    // ⚠️ 36 todavía no es estable, usa 34 para evitar errores
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.davinciconnect"
-        minSdk = 24    // ⚠️ 35 es demasiado alto, baja a 24 o 26 para compatibilidad
-        targetSdk = 34
+        minSdk = 26
+        targetSdk = 34   // ✅ actualizado (Google Play lo exige en 2025)
         versionCode = 1
         versionName = "1.0"
 
@@ -27,6 +26,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -34,16 +34,19 @@ android {
 }
 
 dependencies {
-    implementation(libs.appcompat)
+    // UI
+    implementation(libs.appcompat)         // ✅ solo appcompat, no hace falta activity (ya la incluye)
     implementation(libs.material)
-    implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    // ✅ Firebase
-    implementation("com.google.firebase:firebase-auth:22.3.1")
-    implementation("com.google.firebase:firebase-database:20.3.0") // si usas RTDB
-    implementation("com.google.firebase:firebase-firestore:24.10.3") // si usas Firestore
+    // Firebase (con BOM para mantener versiones alineadas)
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-firestore")
 }
