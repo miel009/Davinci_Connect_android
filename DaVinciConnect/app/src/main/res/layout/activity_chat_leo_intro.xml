@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    android:background="@color/white">
+
+    <!-- logo -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="98dp"
+        android:layout_height="104dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Logo"
+        android:src="@drawable/logo" />
+
+    <!-- título -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chat Leo AI"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#7B3EFF"
+        android:layout_marginBottom="6dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Leo tu AI Asistente"
+        android:textSize="18sp"
+        android:textColor="#7B3EFF"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Descripción -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Con este software podés hacer preguntas a tus dudas."
+        android:textAlignment="center"
+        android:textColor="#777"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- intro - chat -->
+    <ImageView
+        android:layout_width="254dp"
+        android:layout_height="336dp"
+        android:layout_marginBottom="24dp"
+        android:contentDescription="Ilustración Chat Leo"
+        android:src="@drawable/intro_chat" />
+
+    <!-- boton comenzar -->
+    <Button
+        android:id="@+id/btnComenzar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comenzar"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#7B3EFF"
+        android:layout_marginHorizontal="20dp"
+        android:elevation="4dp"
+        android:paddingVertical="12dp"
+        android:textSize="16sp"/>
+
+</LinearLayout>

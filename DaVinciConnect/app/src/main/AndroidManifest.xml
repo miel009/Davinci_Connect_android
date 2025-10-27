@@ -37,6 +37,16 @@
         <activity
             android:name=".ui.HomeActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.MenuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ChatLeoIntroActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ChatLeoActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

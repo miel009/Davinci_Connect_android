@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.davinciconnect.R;
+import com.example.davinciconnect.ui.MenuActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -64,6 +65,11 @@ public class ProfileFragment extends Fragment {
             if (!newName.isEmpty()) {
                 Toast.makeText(getContext(), "Datos guardados (luego lo conectamos a Firebase)", Toast.LENGTH_SHORT).show();
                 // Aquí actualizarías FirebaseUser / Firestore
+
+                // direccionar a principal
+                Intent intent = new Intent(getActivity(), MenuActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
             } else {
                 Toast.makeText(getContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
             }
