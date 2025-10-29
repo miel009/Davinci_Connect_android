@@ -1,64 +1,81 @@
 package com.example.davinciconnect.ui;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.davinciconnect.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth;
-    private EditText etEmailRegister, etPasswordRegister;
-    private Button btnRegister;
+    private EditText editName, editEmail, editPassword;
+    private Button btnCreate;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private String selectedRole; // recibido de RoleSelectionActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        auth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        etEmailRegister = findViewById(R.id.etEmailRegister);
-        etPasswordRegister = findViewById(R.id.etPasswordRegister);
-        btnRegister = findViewById(R.id.btnRegister);
+        selectedRole = getIntent().getStringExtra(RoleSelectionActivity.EXTRA_ROLE);
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String mail = etEmailRegister.getText().toString().trim();
-                String pwd = etPasswordRegister.getText().toString().trim();
+        editName = findViewById(R.id.editName);
+        editEmail = findViewById(R.id.editEmail);
+        editPassword = findViewById(R.id.editPassword);
+        btnCreate = findViewById(R.id.btnCreate);
 
-                if (TextUtils.isEmpty(mail)) {
-                    etEmailRegister.setError("Ingrese un email");
-                    return;
-                }
-                if (TextUtils.isEmpty(pwd)) {
-                    etPasswordRegister.setError("Ingrese una contraseña");
-                    return;
-                }
-                if (pwd.length() < 6) {
-                    etPasswordRegister.setError("La contraseña debe tener al menos 6 caracteres");
-                    return;
-                }
+        btnCreate.setOnClickListener(v -> createAccount());
+    }
 
-                auth.createUserWithEmailAndPassword(mail, pwd).addOnCompleteListener(task -> {
+    private void createAccount() {
+        String name = editName.getText().toString().trim();
+        String email = editEmail.getText().toString().trim();
+        String password = editPassword.getText().toString().trim();
+
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
-                        finish();
+                        String uid = mAuth.getCurrentUser().getUid();
+                        Map<String, Object> user = new HashMap<>();
+                        user.put("name", name);
+                        user.put("email", email);
+                        user.put("role", selectedRole); // 👈 guardamos el rol
+                        user.put("createdAt", System.currentTimeMillis());
+
+                        db.collection("users").document(uid).set(user)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show();
+                                    // Enruta según el rol
+                                    if ("teacher".equals(selectedRole)) {
+                                        startActivity(new Intent(this, TeacherMenuActivity.class));
+                                    } else {
+                                        startActivity(new Intent(this, StudentMenuActivity.class));
+                                    }
+                                    finish();
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(this, "Error guardando usuario", Toast.LENGTH_SHORT).show());
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
-            }
-        });
     }
 }

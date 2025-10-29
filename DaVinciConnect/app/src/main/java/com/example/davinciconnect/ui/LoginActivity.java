@@ -1,67 +1,95 @@
 package com.example.davinciconnect.ui;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.davinciconnect.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth;
-    private EditText etEmail, etPassword;
-    private Button btnLogin;
-    private TextView tvGoRegister;
+    private EditText editEmail, editPassword;
+    private Button btnLogin, btnGoRegister;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
+    private String selectedRole; // "student" o "teacher"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        auth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
+        editEmail = findViewById(R.id.editEmail);
+        editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        tvGoRegister = findViewById(R.id.tvGoRegister);
+        btnGoRegister = findViewById(R.id.btnRegister);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String mail = etEmail.getText().toString().trim();
-                String pwd = etPassword.getText().toString().trim();
+        // Rol recibido desde la pantalla anterior
+        selectedRole = getIntent().getStringExtra(RoleSelectionActivity.EXTRA_ROLE);
 
-                if (TextUtils.isEmpty(mail)) {
-                    etEmail.setError("Ingrese su email");
-                    return;
-                }
-                if (TextUtils.isEmpty(pwd)) {
-                    etPassword.setError("Ingrese su contraseña");
-                    return;
-                }
+        btnLogin.setOnClickListener(v -> loginUser());
 
-                auth.signInWithEmailAndPassword(mail, pwd).addOnCompleteListener(task -> {
+        btnGoRegister.setOnClickListener(v -> {
+            Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+            i.putExtra(RoleSelectionActivity.EXTRA_ROLE, selectedRole);
+            startActivity(i);
+        });
+    }
+
+    private void loginUser() {
+        String email = editEmail.getText().toString().trim();
+        String password = editPassword.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "Bienvenido", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                        finish();
+                        // tras login, consultamos Firestore para saber el rol real del usuario
+                        String uid = mAuth.getCurrentUser().getUid();
+                        db.collection("users").document(uid).get()
+                                .addOnSuccessListener(this::routeByRole)
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(this, "Error obteniendo usuario", Toast.LENGTH_SHORT).show());
                     } else {
-                        Toast.makeText(LoginActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
-            }
-        });
+    }
 
-        tvGoRegister.setOnClickListener(v -> {
-            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-        });
+    private void routeByRole(DocumentSnapshot doc){
+        if (!doc.exists()) {
+            Toast.makeText(this, "Perfil no encontrado. Completa el registro.", Toast.LENGTH_LONG).show();
+            // Si el usuario no tiene documento, lo mandamos a registro con el rol seleccionado
+            Intent i = new Intent(this, RegisterActivity.class);
+            i.putExtra(RoleSelectionActivity.EXTRA_ROLE, selectedRole);
+            startActivity(i);
+            finish();
+            return;
+        }
+
+        String role = doc.getString("role"); // "student" o "teacher"
+        if ("teacher".equals(role)) {
+            startActivity(new Intent(this, TeacherMenuActivity.class));
+        } else if ("student".equals(role)) {
+            startActivity(new Intent(this, StudentMenuActivity.class));
+        } else {
+            Toast.makeText(this, "Rol no válido. Contacta al admin.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        finish();
     }
 }
