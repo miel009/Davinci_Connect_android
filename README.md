@@ -28,7 +28,6 @@ La aplicación busca:
 
 ## Configuración inicial
 
-
 Antes de ejecutar el proyecto, instalar:
 
 - Android Studio (última versión)
@@ -43,17 +42,20 @@ Iniciá sesión en Firebase:
   ```bash
   firebase login
   ```
-Instalar dependencias delas funciones ,en DaVinciConnect (File → Open → DaVinciConnect).
+Instalar dependencias de las funciones ,en DaVinciConnect (File → Open → DaVinciConnect). 
+Instalara: firebase-admin, firebase-functions, axios y cors.
 
   ```bash
   cd functions
   npm install
+  npm install firebase-functions@latest firebase-admin@latest axios cors
   ```
+
 Probar el backend localmente, ejecutar en la carpeta functions:
 
  ``` bash
  firebase emulators:start --only functions
  ```
 
-Ir  al chat con Chat Leo y preguntarle por "materias".
+Ir  al chat con ChatLeo y preguntarle por "materias".
 
