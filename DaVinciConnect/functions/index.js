@@ -1,45 +1,44 @@
-const functions = require("firebase-functions");
+const { onRequest } = require("firebase-functions/v2/https");
+const { setGlobalOptions } = require("firebase-functions/v2/options");
 const admin = require("firebase-admin");
 const axios = require("axios");
 const cors = require("cors")({ origin: true });
 
+setGlobalOptions({
+  region: "us-central1",
+  timeoutSeconds: 30,
+  memory: "512MiB",
+});
+
 admin.initializeApp();
 
-// Lee la key de dos lugares: env o functions:config (para evitar el crash)
+// API key de gemini
 const GEMINI_API_KEY =
   process.env.GEMINI_API_KEY ||
-  (functions.config().gemini && functions.config().gemini.key) ||
-  "";
+  process.env.GOOGLE_API_KEY ||
+  "AIzaSyDJ4vPCQQ1OFBX80f1Fc0VgX5VHRrsRksk";
 
 const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
-// ⚠️ Endpoint compatible con Android (ChatService.ChatReq -> { text, uid })
-exports.chatLeo = functions.https.onRequest((req, res) => {
+// endpoint
+exports.chatLeo = onRequest(async (req, res) => {
   cors(req, res, async () => {
     try {
       if (req.method !== "POST") {
         return res.status(405).json({ error: "Use POST" });
       }
 
-      if (!GEMINI_API_KEY) {
-        return res.status(500).json({
-          error:
-            "GEMINI_API_KEY no configurada. Ejecuta: firebase functions:config:set gemini.key=\"TU_API_KEY\"",
-        });
-      }
-
       const { text, uid } = req.body || {};
       if (!text) return res.status(400).json({ error: "text required" });
 
-      // (Opcional) Cargar contexto del alumno desde Firestore
+      // alumno
       let contexto = {};
       if (uid) {
         const db = admin.firestore();
         const userDoc = await db.collection("users").doc(uid).get();
         const alumno = userDoc.exists ? userDoc.data() : {};
 
-        // Ajusta a tu esquema real si tienes estas subcolecciones:
         const mats = await db.collection("alumnos").doc(uid).collection("materias").get();
         const materias = mats.docs.map((d) => d.data());
 
@@ -52,19 +51,20 @@ exports.chatLeo = functions.https.onRequest((req, res) => {
         contexto = { alumno, materias, calificaciones, horarios: horariosData };
       }
 
-      const systemPrompt = `
-Eres "Leo", asistente académico. Responde en español, claro y breve.
+      // prompt
+      const systemPrompt = `Eres "Leo", asistente académico. Responde en español, claro y breve.
 Usa el CONTEXTO JSON si responde a la pregunta (horarios, materias, aulas, notas).
 Si falta dato, pide precisión o explica dónde verlo en el campus.
 Contexto JSON:
 ${JSON.stringify(contexto).slice(0, 25000)}
-`;
+Pregunta del alumno: ${text}`;
 
+      //llamada al modelo
       const payload = {
         contents: [
           {
             role: "user",
-            parts: [{ text: `${systemPrompt}\n\nPregunta del alumno: ${text}` }],
+            parts: [{ text: systemPrompt }],
           },
         ],
       };
@@ -76,9 +76,10 @@ ${JSON.stringify(contexto).slice(0, 25000)}
       const reply =
         r.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
         "No pude generar respuesta ahora.";
+
       return res.json({ reply });
     } catch (e) {
-      console.error(e);
+      console.error("Error en chatLeo:", e.response?.data || e.message);
       return res.status(500).json({ error: e.message });
     }
   });
