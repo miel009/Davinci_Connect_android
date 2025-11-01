@@ -26,6 +26,6 @@ public interface ChatService {
         public String reply;
     }
 
-    @POST("chatLeo") // 👈 importante: sin "/" al inicio
+    @POST("chatLeo") //
     Call<ChatRes> chat(@Body ChatReq req);
 }
