@@ -81,6 +81,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 
     // Retrofit + Gson + logging
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
