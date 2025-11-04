@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.davinciconnect.R;
-import com.example.davinciconnect.ui.chat.ChatLeoActivity;
+import com.example.davinciconnect.storage.StorageActivity;
+import com.example.davinciconnect.ui.ChatIntroActivity;
 import com.example.davinciconnect.ui.menu.MenuAdapter;
 import com.example.davinciconnect.ui.menu.MenuItemModel;
 
@@ -36,6 +37,9 @@ public class StudentMenuActivity extends AppCompatActivity {
                     break;
 
                 case "Documentos":
+                    startActivity(new Intent(this, StorageActivity.class));
+                    break;
+
                 case "Campus":
                 case "Asignaturas":
                 case "Calificaciones":
