@@ -27,6 +27,7 @@
         <activity android:name=".ui.StudentMenuActivity" android:exported="false" />
         <activity android:name=".ui.chat.ChatLeoActivity" android:exported="false" />
         <activity android:name=".storage.StorageActivity" android:exported="false" />
+        <activity android:name=".ui.CalendarActivity" android:exported="false" /> <!-- ¡Añadido! -->
 
         <!-- Launcher -->
         <activity

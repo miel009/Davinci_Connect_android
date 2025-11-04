@@ -35,6 +35,9 @@ public class TeacherMenuActivity extends AppCompatActivity {
                 case "Chat IA":
                     startActivity(new Intent(this, ChatIntroActivity.class));
                     break;
+                case "Calendario":
+                    startActivity(new Intent(this, CalendarActivity.class));
+                    break;
                 default:
                     Toast.makeText(this, "Profesor → " + item.label, Toast.LENGTH_SHORT).show();
                     break;
