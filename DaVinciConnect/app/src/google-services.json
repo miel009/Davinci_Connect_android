@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "252502803706",
+    "project_id": "davinciconnect-4817d",
+    "storage_bucket": "davinciconnect-4817d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252502803706:android:50ea96af688fb3ebe7f543",
+        "android_client_info": {
+          "package_name": "com.example.davinciconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHii_Suwbi9GIdtagIrzAh2xAnLwL40cs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
