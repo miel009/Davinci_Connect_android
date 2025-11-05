@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.StorageActivity;
-import com.example.davinciconnect.ui.ChatIntroActivity;
 import com.example.davinciconnect.ui.menu.MenuAdapter;
 import com.example.davinciconnect.ui.menu.MenuItemModel;
 
@@ -29,26 +28,17 @@ public class StudentMenuActivity extends AppCompatActivity {
         rv.setHasFixedSize(true);
 
         MenuAdapter adapter = new MenuAdapter((item, pos) -> {
-            // Abrir pantallas según item.label (puedes expandir este switch más adelante)
             switch (item.label) {
-                case "Chat IA":
-                    // Abre el chat con Gemini
-                    startActivity(new Intent(this, ChatIntroActivity.class));
-                    break;
-
                 case "Documentos":
                     startActivity(new Intent(this, StorageActivity.class));
                     break;
-
-                case "Campus":
-                case "Asignaturas":
-                case "Calificaciones":
                 case "Calendario":
-                case "Clases":
-                case "Institucional":
-                    Toast.makeText(this, "Alumno → " + item.label, Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, CalendarActivity.class));
                     break;
-
+                case "Chat Leo":
+                    // Asumiendo que el chat de Alumno es ChatIntroActivity por ahora
+                    startActivity(new Intent(this, ChatIntroActivity.class)); 
+                    break;
                 default:
                     Toast.makeText(this, "Alumno → " + item.label, Toast.LENGTH_SHORT).show();
                     break;
@@ -56,16 +46,14 @@ public class StudentMenuActivity extends AppCompatActivity {
         });
         rv.setAdapter(adapter);
 
-        // Íconos del sistema para compilar sin drawables propios (luego reemplaza por los tuyos)
+        // Lista de ítems actualizada según la nueva imagen
         List<MenuItemModel> items = Arrays.asList(
                 new MenuItemModel(android.R.drawable.ic_menu_agenda, "Documentos"),
                 new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus"),
                 new MenuItemModel(android.R.drawable.ic_menu_info_details, "Asignaturas"),
                 new MenuItemModel(android.R.drawable.ic_menu_sort_by_size, "Calificaciones"),
                 new MenuItemModel(android.R.drawable.ic_menu_my_calendar, "Calendario"),
-                new MenuItemModel(android.R.drawable.ic_menu_week, "Clases"),
-                new MenuItemModel(android.R.drawable.ic_btn_speak_now, "Chat IA"),
-                new MenuItemModel(android.R.drawable.ic_menu_help, "Institucional")
+                new MenuItemModel(android.R.drawable.ic_btn_speak_now, "Chat Leo")
         );
         adapter.submit(items);
     }
