@@ -19,7 +19,7 @@ android {
         buildConfigField(
             "String",
             "FUNCTIONS_BASE_URL",
-            "\"http://10.0.2.2:5001/davinciconnect-4817d/us-central1/\""
+            "\"https://chatleo-zjgyrtlgla-uc.a.run.app/\""
         )
     }
 
