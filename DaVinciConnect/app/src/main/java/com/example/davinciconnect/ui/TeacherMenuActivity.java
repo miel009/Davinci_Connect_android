@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.StorageActivity;
-import com.example.davinciconnect.ui.ChatIntroActivity;
 import com.example.davinciconnect.ui.menu.MenuAdapter;
 import com.example.davinciconnect.ui.menu.MenuItemModel;
 
@@ -32,9 +31,6 @@ public class TeacherMenuActivity extends AppCompatActivity {
                 case "Documentos":
                     startActivity(new Intent(this, StorageActivity.class));
                     break;
-                case "Chat IA":
-                    startActivity(new Intent(this, ChatIntroActivity.class));
-                    break;
                 case "Calendario":
                     startActivity(new Intent(this, CalendarActivity.class));
                     break;
@@ -45,15 +41,14 @@ public class TeacherMenuActivity extends AppCompatActivity {
         });
         rv.setAdapter(adapter);
 
+        // Lista de ítems actualizada según la nueva imagen
         List<MenuItemModel> items = Arrays.asList(
                 new MenuItemModel(android.R.drawable.ic_menu_agenda, "Documentos"),
-                new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus Profesor"),
+                new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus"),
                 new MenuItemModel(android.R.drawable.ic_menu_edit, "Temarios"),
-                new MenuItemModel(android.R.drawable.ic_menu_week, "Clases Profesor"),
-                new MenuItemModel(android.R.drawable.ic_menu_sort_by_size, "Calificaciones"),
+                new MenuItemModel(android.R.drawable.ic_menu_help, "Institucional"),
                 new MenuItemModel(android.R.drawable.ic_menu_my_calendar, "Calendario"),
-                new MenuItemModel(android.R.drawable.ic_btn_speak_now, "Chat IA"),
-                new MenuItemModel(android.R.drawable.ic_menu_manage, "Pagos")
+                new MenuItemModel(android.R.drawable.ic_menu_week, "Clases")
         );
         adapter.submit(items);
     }
