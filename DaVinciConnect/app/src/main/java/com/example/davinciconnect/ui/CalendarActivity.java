@@ -27,6 +27,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +45,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
 
     private static final int NOTIFICATION_PERMISSION_CODE = 101;
     private String selectedDate;
-    private DatabaseReference databaseReference;
+    private DatabaseReference userEventsReference; // <-- Referencia específica del usuario
     private EventAdapter eventAdapter;
     private List<Event> eventList = new ArrayList<>();
     private String selectedTime = "";
@@ -54,8 +56,17 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
         setContentView(R.layout.activity_calendar);
 
         try {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                // Si no hay usuario, no se puede continuar. Redirigir al login.
+                Toast.makeText(this, "Usuario no autenticado.", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            String userId = currentUser.getUid();
+            userEventsReference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("calendar_events");
+
             requestNotificationPermission();
-            databaseReference = FirebaseDatabase.getInstance().getReference("calendar_events");
 
             RecyclerView rvEvents = findViewById(R.id.rvEvents);
             rvEvents.setLayoutManager(new LinearLayoutManager(this));
@@ -85,6 +96,8 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
             finish();
         }
     }
+    
+    // ... (el resto de los métodos permanecen casi iguales, pero usarán userEventsReference)
 
     private void requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -134,7 +147,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
             String description = descriptionInput.getText().toString();
             if (!description.isEmpty() && !selectedTime.isEmpty()) {
                 if (eventToEdit == null) {
-                    DatabaseReference newEventRef = databaseReference.child(selectedDate).push();
+                    DatabaseReference newEventRef = userEventsReference.child(selectedDate).push();
                     String eventId = newEventRef.getKey();
                     Event newEvent = new Event(eventId, description, selectedTime);
                     saveEventToFirebase(newEventRef, newEvent, true);
@@ -142,7 +155,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
                     cancelNotification(eventToEdit);
                     eventToEdit.setDescription(description);
                     eventToEdit.setTime(selectedTime);
-                    DatabaseReference eventRef = databaseReference.child(selectedDate).child(eventToEdit.getId());
+                    DatabaseReference eventRef = userEventsReference.child(selectedDate).child(eventToEdit.getId());
                     saveEventToFirebase(eventRef, eventToEdit, true);
                 }
             }
@@ -164,7 +177,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
     private void deleteEvent(Event event) {
         new AlertDialog.Builder(this).setTitle("Confirmar eliminación").setMessage("¿Estás seguro de que quieres eliminar este evento?").setPositiveButton("Eliminar", (dialog, which) -> {
             cancelNotification(event);
-            DatabaseReference eventRef = databaseReference.child(selectedDate).child(event.getId());
+            DatabaseReference eventRef = userEventsReference.child(selectedDate).child(event.getId());
             eventRef.removeValue().addOnSuccessListener(aVoid -> {
                 Toast.makeText(CalendarActivity.this, "Evento eliminado", Toast.LENGTH_SHORT).show();
                 loadEventsForDate(selectedDate);
@@ -174,31 +187,21 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
 
     private void scheduleNotification(Event event) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            new AlertDialog.Builder(this)
-                .setTitle("Permiso Requerido")
-                .setMessage("Para asegurar que las notificaciones lleguen a tiempo, por favor concede el permiso para programar alarmas exactas.")
-                .setPositiveButton("Ir a Ajustes", (dialog, which) -> {
-                    Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                    startActivity(intent);
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
+             new AlertDialog.Builder(this).setTitle("Permiso Requerido").setMessage("Para asegurar que las notificaciones lleguen a tiempo, por favor concede el permiso para programar alarmas exactas.").setPositiveButton("Ir a Ajustes", (d, w) -> {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                startActivity(intent);
+            }).setNegativeButton("Cancelar", null).show();
             return;
         }
-
         try {
             Intent intent = new Intent(this, NotificationReceiver.class);
             intent.putExtra("event_description", event.getDescription());
-
             int pendingIntentId = event.getId().hashCode();
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, pendingIntentId, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d HH:mm", Locale.getDefault());
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(sdf.parse(selectedDate + " " + event.getTime()));
-
             if (System.currentTimeMillis() < calendar.getTimeInMillis()) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
@@ -216,7 +219,8 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
     }
 
     private void loadEventsForDate(String date) {
-        databaseReference.child(date).addValueEventListener(new ValueEventListener() {
+        if (userEventsReference == null) return;
+        userEventsReference.child(date).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 eventList.clear();
@@ -233,7 +237,6 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
                 }
                 eventAdapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(CalendarActivity.this, "Error al cargar eventos", Toast.LENGTH_SHORT).show();
