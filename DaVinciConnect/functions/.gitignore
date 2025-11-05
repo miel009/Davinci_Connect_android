@@ -1,2 +1,38 @@
+# === Node / Firebase ===
 node_modules/
+functions/node_modules/
+functions/.env
+functions/.runtimeconfig.json
+firebase-debug.log
+.firebaserc
+.firebase/
+lib/
+.tmp/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Android / Gradle ===
+.gradle/
+build/
+app/build/
+local.properties
+captures/
+*.iml
+.idea/
+.DS_Store
+
+# === OS / Sistema ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# === VSCode / IntelliJ ===
+.vscode/
+.idea/
+*.iml
+
+# === Misc ===
+*.log
+.env
 *.local

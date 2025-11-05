@@ -1,27 +1,25 @@
 {
-  "functions": [
-    {
-      "source": "functions",
-      "runtime": "nodejs22",
-      "codebase": "default",
-      "disallowLegacyRuntimeConfig": true,
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ]
-    }
-  ],
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs22",
+    "region": "us-central1",
+    "timeoutSeconds": 30,
+    "memory": "512MiB"
+  },
   "emulators": {
     "functions": {
       "host": "127.0.0.1",
       "port": 5001
     },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8085
+    },
     "ui": {
       "enabled": true,
+      "host": "127.0.0.1",
       "port": 4000
-    }
+    },
+    "singleProjectMode": true
   }
 }

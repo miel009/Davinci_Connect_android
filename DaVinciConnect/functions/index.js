@@ -3,6 +3,8 @@ const { setGlobalOptions } = require("firebase-functions/v2/options");
 const admin = require("firebase-admin");
 const axios = require("axios");
 const cors = require("cors")({ origin: true });
+require("dotenv").config();
+
 
 setGlobalOptions({
   region: "us-central1",
@@ -13,10 +15,7 @@ setGlobalOptions({
 admin.initializeApp();
 
 // API key de gemini
-const GEMINI_API_KEY =
-  process.env.GEMINI_API_KEY ||
-  process.env.GOOGLE_API_KEY ||
-  "AIzaSyDJ4vPCQQ1OFBX80f1Fc0VgX5VHRrsRksk";
+const GEMINI_API_KEY =process.env.GEMINI_API_KEY;
 
 const GEMINI_URL =
    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
