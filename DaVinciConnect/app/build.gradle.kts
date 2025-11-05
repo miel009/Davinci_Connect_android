@@ -19,7 +19,7 @@ android {
         buildConfigField(
             "String",
             "FUNCTIONS_BASE_URL",
-            "\"https://us-central1-davinciconnect-4817d.cloudfunctions.net/\""
+            "\"http://10.0.2.2:5001/davinciconnect-4817d/us-central1/\""
         )
     }
 
