@@ -75,7 +75,12 @@ public class StudentMenuActivity extends AppCompatActivity {
             pickImageLauncher.launch(intent);
         });
         
-        // ... Listeners para otras opciones del menú
+        popupView.findViewById(R.id.menu_profile).setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class)); // <-- Acción para Perfil
+            popupWindow.dismiss();
+        });
+
+        // ... (Listeners para otras opciones del menú)
 
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
         popupWindow.setOutsideTouchable(true);
@@ -92,7 +97,6 @@ public class StudentMenuActivity extends AppCompatActivity {
         if (photoUrl != null) {
             Glide.with(this).load(photoUrl).into(ivAvatar);
         } else {
-            // Cargar avatar por defecto de Dicebear si no hay foto de perfil
             String avatarURL = "https://api.dicebear.com/9.x/identicon/svg?seed=" + user.getEmail();
             Glide.with(this).load(avatarURL).into(ivAvatar);
         }
@@ -102,14 +106,11 @@ public class StudentMenuActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
 
-        // 1. Subir la imagen a Firebase Storage
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference avatarRef = storageRef.child("profile_images/" + user.getUid() + "/avatar.jpg");
 
         avatarRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-            // 2. Obtener la URL de descarga
             avatarRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                // 3. Actualizar el perfil del usuario de Firebase Auth
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                         .setPhotoUri(downloadUrl)
                         .build();
@@ -117,14 +118,13 @@ public class StudentMenuActivity extends AppCompatActivity {
                 user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
-                        // Volver a cargar el avatar para mostrar el cambio
                          Glide.with(this).load(downloadUrl).into(ivAvatar);
                     } else {
                         Toast.makeText(this, "Error al actualizar el perfil", Toast.LENGTH_SHORT).show();
                     }
                 });
-            }).addOnFailureListener(e -> Toast.makeText(this, "Error al obtener la URL de descarga", Toast.LENGTH_SHORT).show());
-        }).addOnFailureListener(e -> Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show());
+            });
+        });
     }
 
     private void setupMainMenu() {

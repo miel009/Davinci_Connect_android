@@ -49,6 +49,7 @@
         <activity android:name=".storage.StorageActivity" android:exported="false" />
         <activity android:name=".storage.FileListActivity" android:exported="false" />
         <activity android:name=".ui.CalendarActivity" android:exported="false" />
+        <activity android:name=".ui.ProfileActivity" android:exported="false" /> <!-- Nueva Actividad -->
 
         <activity
             android:name=".ui.SplashActivity"
