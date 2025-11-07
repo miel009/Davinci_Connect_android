@@ -63,6 +63,14 @@ public class TeacherMenuActivity extends AppCompatActivity {
         btnMenu.setOnClickListener(this::showCustomMenu);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isFinishing()) {
+            FirebaseAuth.getInstance().signOut();
+        }
+    }
+
     private void showCustomMenu(View anchor) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_menu_with_avatar, null);
@@ -81,6 +89,12 @@ public class TeacherMenuActivity extends AppCompatActivity {
 
         popupView.findViewById(R.id.menu_profile).setOnClickListener(v -> {
             showPasswordDialog();
+            popupWindow.dismiss();
+        });
+
+        popupView.findViewById(R.id.menu_contact).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/davinciconnect/"));
+            startActivity(intent);
             popupWindow.dismiss();
         });
 
