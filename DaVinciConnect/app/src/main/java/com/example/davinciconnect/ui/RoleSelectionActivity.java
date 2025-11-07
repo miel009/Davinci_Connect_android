@@ -13,6 +13,7 @@ public class RoleSelectionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager.applyTheme(this);
         setContentView(R.layout.activity_role_selection);
 
         Button btnAlumno = findViewById(R.id.btnAlumno);

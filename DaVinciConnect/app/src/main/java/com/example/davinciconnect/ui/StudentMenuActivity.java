@@ -53,6 +53,7 @@ public class StudentMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager.applyTheme(this);
         setContentView(R.layout.activity_student_menu);
         setupMainMenu();
 
@@ -83,7 +84,20 @@ public class StudentMenuActivity extends AppCompatActivity {
             popupWindow.dismiss();
         });
 
-        // ... (Listeners para otras opciones del menú)
+        popupView.findViewById(R.id.menu_dark_mode).setOnClickListener(v -> {
+            ThemeManager.toggleTheme(this);
+            recreate();
+            popupWindow.dismiss();
+        });
+
+        popupView.findViewById(R.id.menu_logout).setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            popupWindow.dismiss();
+        });
 
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
         popupWindow.setOutsideTouchable(true);

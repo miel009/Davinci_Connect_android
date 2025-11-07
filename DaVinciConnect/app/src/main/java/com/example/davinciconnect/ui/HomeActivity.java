@@ -23,6 +23,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager.applyTheme(this);
         setContentView(R.layout.activity_home);
 
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -55,7 +56,8 @@ public class HomeActivity extends AppCompatActivity {
                 if (id == R.id.nav_profile) {
                     fragment = new ProfileFragment();
                 } else if (id == R.id.nav_darkmode) {
-                    // luego conectamos con SettingsFragment
+                    ThemeManager.toggleTheme(HomeActivity.this);
+                    recreate();
                 } else if (id == R.id.nav_comments) {
                     // CommentsFragment
                 } else if (id == R.id.nav_contact) {

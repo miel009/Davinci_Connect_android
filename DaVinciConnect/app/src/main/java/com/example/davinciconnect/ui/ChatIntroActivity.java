@@ -14,6 +14,7 @@ public class ChatIntroActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager.applyTheme(this);
         setContentView(R.layout.activity_chat_intro);
 
         Button btn = findViewById(R.id.btnComenzarChat);

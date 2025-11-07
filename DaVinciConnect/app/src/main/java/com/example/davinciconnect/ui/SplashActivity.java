@@ -17,6 +17,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager.applyTheme(this);
         setContentView(R.layout.activity_splash);
 
         new Handler().postDelayed(this::decideNext, SPLASH_DELAY);
