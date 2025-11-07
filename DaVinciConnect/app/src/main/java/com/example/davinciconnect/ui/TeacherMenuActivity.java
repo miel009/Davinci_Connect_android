@@ -57,18 +57,12 @@ public class TeacherMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_teacher_menu);
         setupMainMenu();
 
+        startService(new Intent(this, AppLifecycleService.class));
+
         ImageButton btnSearch = findViewById(R.id.btnSearch);
         ImageButton btnMenu = findViewById(R.id.btnMenu);
         btnSearch.setOnClickListener(v -> Toast.makeText(this, "Búsqueda no implementada", Toast.LENGTH_SHORT).show());
         btnMenu.setOnClickListener(this::showCustomMenu);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()) {
-            FirebaseAuth.getInstance().signOut();
-        }
     }
 
     private void showCustomMenu(View anchor) {
