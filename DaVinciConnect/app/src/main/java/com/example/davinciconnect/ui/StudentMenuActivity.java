@@ -84,6 +84,12 @@ public class StudentMenuActivity extends AppCompatActivity {
             popupWindow.dismiss();
         });
 
+        popupView.findViewById(R.id.menu_comments).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://davinci-connect-web.vercel.app/#contacto"));
+            startActivity(intent);
+            popupWindow.dismiss();
+        });
+
         popupView.findViewById(R.id.menu_dark_mode).setOnClickListener(v -> {
             ThemeManager.toggleTheme(this);
             recreate();
