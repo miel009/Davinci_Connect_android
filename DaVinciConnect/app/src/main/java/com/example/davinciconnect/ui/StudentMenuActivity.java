@@ -1,6 +1,7 @@
 package com.example.davinciconnect.ui;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,16 +70,16 @@ public class StudentMenuActivity extends AppCompatActivity {
 
         ivAvatar = popupView.findViewById(R.id.ivAvatar);
         TextView tvUserName = popupView.findViewById(R.id.tvUserName);
-        
+
         loadAvatarAndName(tvUserName);
 
         ivAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickImageLauncher.launch(intent);
         });
-        
+
         popupView.findViewById(R.id.menu_profile).setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class)); // <-- Acción para Perfil
+            showPasswordDialog();
             popupWindow.dismiss();
         });
 
@@ -87,11 +90,43 @@ public class StudentMenuActivity extends AppCompatActivity {
         popupWindow.showAsDropDown(anchor);
     }
 
+    private void showPasswordDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_password, null);
+        builder.setView(dialogView);
+
+        final EditText etPassword = dialogView.findViewById(R.id.etPasswordDialog);
+
+        builder.setTitle("Verificación de seguridad")
+            .setPositiveButton("Aceptar", (dialog, which) -> {
+                String password = etPassword.getText().toString();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null && user.getEmail() != null) {
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(user.getEmail(), password)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                startActivity(new Intent(this, ProfileActivity.class));
+                            } else {
+                                Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                }
+            })
+            .setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+
+        builder.create().show();
+    }
+
     private void loadAvatarAndName(TextView tvUserName) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
 
-        tvUserName.setText(user.getEmail());
+        if (user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {
+            tvUserName.setText(user.getDisplayName());
+        } else {
+            tvUserName.setText(user.getEmail());
+        }
 
         Uri photoUrl = user.getPhotoUrl();
         if (photoUrl != null) {
@@ -112,13 +147,13 @@ public class StudentMenuActivity extends AppCompatActivity {
         avatarRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
             avatarRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setPhotoUri(downloadUrl)
-                        .build();
-                
+                    .setPhotoUri(downloadUrl)
+                    .build();
+
                 user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
-                         Glide.with(this).load(downloadUrl).into(ivAvatar);
+                        Glide.with(this).load(downloadUrl).into(ivAvatar);
                     } else {
                         Toast.makeText(this, "Error al actualizar el perfil", Toast.LENGTH_SHORT).show();
                     }
@@ -141,12 +176,12 @@ public class StudentMenuActivity extends AppCompatActivity {
         });
         rv.setAdapter(adapter);
         List<MenuItemModel> items = Arrays.asList(
-                new MenuItemModel(android.R.drawable.ic_menu_agenda, "Documentos"),
-                new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus"),
-                new MenuItemModel(android.R.drawable.ic_menu_info_details, "Asignaturas"),
-                new MenuItemModel(android.R.drawable.ic_menu_sort_by_size, "Calificaciones"),
-                new MenuItemModel(android.R.drawable.ic_menu_my_calendar, "Calendario"),
-                new MenuItemModel(android.R.drawable.ic_btn_speak_now, "Chat Leo")
+            new MenuItemModel(android.R.drawable.ic_menu_agenda, "Documentos"),
+            new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus"),
+            new MenuItemModel(android.R.drawable.ic_menu_info_details, "Asignaturas"),
+            new MenuItemModel(android.R.drawable.ic_menu_sort_by_size, "Calificaciones"),
+            new MenuItemModel(android.R.drawable.ic_menu_my_calendar, "Calendario"),
+            new MenuItemModel(android.R.drawable.ic_btn_speak_now, "Chat Leo")
         );
         adapter.submit(items);
     }

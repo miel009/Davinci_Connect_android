@@ -1,29 +1,36 @@
 package com.example.davinciconnect.storage;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.davinciconnect.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class StorageActivity extends AppCompatActivity implements FolderAdapter.OnFolderClickListener {
 
-    private static final String PREFS_NAME = "PinPrefs";
-    private static final String PIN_KEY = "user_pin";
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_storage);
+
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         RecyclerView rvFolders = findViewById(R.id.rvFolders);
         rvFolders.setLayoutManager(new GridLayoutManager(this, 3));
@@ -59,14 +66,26 @@ public class StorageActivity extends AppCompatActivity implements FolderAdapter.
     }
 
     private void handlePrivateFolderClick() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String savedPin = prefs.getString(PIN_KEY, null);
-
-        if (savedPin == null) {
-            showCreatePinDialog();
-        } else {
-            showEnterPinDialog(savedPin);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "Usuario no autenticado.", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        db.collection("users").document(currentUser.getUid()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists() && documentSnapshot.contains("pin")) {
+                        String savedPin = documentSnapshot.getString("pin");
+                        if (savedPin != null && !savedPin.isEmpty()) {
+                            showEnterPinDialog(savedPin);
+                        } else {
+                            showCreatePinDialog();
+                        }
+                    } else {
+                        showCreatePinDialog();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(StorageActivity.this, "Error al verificar el PIN.", Toast.LENGTH_SHORT).show());
     }
 
     private void showCreatePinDialog() {
@@ -75,22 +94,27 @@ public class StorageActivity extends AppCompatActivity implements FolderAdapter.
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        input.setHint("Crea un PIN de 4 dígitos");
+        input.setHint("Crea un PIN");
         builder.setView(input);
 
         builder.setPositiveButton("Guardar", (dialog, which) -> {
             String pin = input.getText().toString();
-            if (pin.length() == 4) {
-                SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
-                editor.putString(PIN_KEY, pin);
-                editor.apply();
-                Toast.makeText(this, "PIN guardado con éxito", Toast.LENGTH_SHORT).show();
-                openPrivateFolder();
+            if (!pin.isEmpty()) {
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser != null) {
+                    db.collection("users").document(currentUser.getUid())
+                            .update("pin", pin)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "PIN guardado con éxito", Toast.LENGTH_SHORT).show();
+                                openPrivateFolder();
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(this, "Error al guardar el PIN", Toast.LENGTH_SHORT).show());
+                }
             } else {
-                Toast.makeText(this, "El PIN debe tener 4 dígitos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "El PIN no puede estar vacío", Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Cancelar", null);
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
         builder.show();
     }
 
@@ -100,7 +124,7 @@ public class StorageActivity extends AppCompatActivity implements FolderAdapter.
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        input.setHint("PIN de 4 dígitos");
+        input.setHint("PIN");
         builder.setView(input);
 
         builder.setPositiveButton("Entrar", (dialog, which) -> {
@@ -111,7 +135,7 @@ public class StorageActivity extends AppCompatActivity implements FolderAdapter.
                 Toast.makeText(this, "PIN incorrecto", Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Cancelar", null);
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
         builder.show();
     }
 
