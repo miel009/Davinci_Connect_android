@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,5 +30,8 @@ public class ChatIntroActivity extends AppCompatActivity {
         Animation floatAnim = AnimationUtils.loadAnimation(this, R.anim.anim_float);
         imgLeonardo.startAnimation(floatAnim);
 
+        // volver atras
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 }
