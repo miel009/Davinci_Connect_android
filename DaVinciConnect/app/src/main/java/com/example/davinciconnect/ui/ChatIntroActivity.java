@@ -32,6 +32,7 @@ public class ChatIntroActivity extends AppCompatActivity {
 
         // volver atras
         ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> finish()
+        );
     }
 }
