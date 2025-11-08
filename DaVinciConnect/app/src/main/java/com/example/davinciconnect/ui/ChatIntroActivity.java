@@ -2,7 +2,10 @@ package com.example.davinciconnect.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,5 +24,10 @@ public class ChatIntroActivity extends AppCompatActivity {
         btn.setOnClickListener(v -> {
             startActivity(new Intent(this, ChatLeoActivity.class));
         });
+        //  animacion flotante
+        ImageView imgLeonardo = findViewById(R.id.imgIlustracion);
+        Animation floatAnim = AnimationUtils.loadAnimation(this, R.anim.anim_float);
+        imgLeonardo.startAnimation(floatAnim);
+
     }
 }
