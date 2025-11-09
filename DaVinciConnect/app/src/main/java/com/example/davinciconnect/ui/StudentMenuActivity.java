@@ -58,11 +58,8 @@ public class StudentMenuActivity extends AppCompatActivity {
         setupMainMenu();
 
         startService(new Intent(this, AppLifecycleService.class));
-
         ImageButton btnSearch = findViewById(R.id.btnSearch);
-        ImageButton btnMenu = findViewById(R.id.btnMenu);
         btnSearch.setOnClickListener(v -> Toast.makeText(this, "Búsqueda no implementada", Toast.LENGTH_SHORT).show());
-        btnMenu.setOnClickListener(this::showCustomMenu);
     }
 
     private void showCustomMenu(View anchor) {
@@ -204,13 +201,18 @@ public class StudentMenuActivity extends AppCompatActivity {
         });
         rv.setAdapter(adapter);
         List<MenuItemModel> items = Arrays.asList(
-            new MenuItemModel(android.R.drawable.ic_menu_agenda, "Documentos"),
-            new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus"),
-            new MenuItemModel(android.R.drawable.ic_menu_info_details, "Asignaturas"),
-            new MenuItemModel(android.R.drawable.ic_menu_sort_by_size, "Calificaciones"),
-            new MenuItemModel(android.R.drawable.ic_menu_my_calendar, "Calendario"),
-            new MenuItemModel(android.R.drawable.ic_btn_speak_now, "Chat Leo")
+                new MenuItemModel(R.drawable.documentos, "Documentos"),
+                new MenuItemModel(R.drawable.campus, "Campus"),
+                new MenuItemModel(R.drawable.asignaturas, "Asignaturas"),
+                new MenuItemModel(R.drawable.calificaciones, "Calificaciones"),
+                new MenuItemModel(R.drawable.calendario, "Calendario"),
+                new MenuItemModel(R.drawable.chat, "Chat Leo")
         );
         adapter.submit(items);
+
+        // volver atras
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish()
+        );
     }
 }
