@@ -203,13 +203,20 @@ public class TeacherMenuActivity extends AppCompatActivity {
         });
         rv.setAdapter(adapter);
         List<MenuItemModel> items = Arrays.asList(
-                new MenuItemModel(android.R.drawable.ic_menu_agenda, "Documentos"),
-                new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus"),
-                new MenuItemModel(android.R.drawable.ic_menu_edit, "Temarios"),
-                new MenuItemModel(android.R.drawable.ic_menu_help, "Institucional"),
-                new MenuItemModel(android.R.drawable.ic_menu_my_calendar, "Calendario"),
-                new MenuItemModel(android.R.drawable.ic_menu_week, "Clases")
+                new MenuItemModel(R.drawable.documentos_prof, "Documentos"),
+                new MenuItemModel(R.drawable.campus, "Campus"),
+                new MenuItemModel(R.drawable.temarios, "Temarios"),
+                    new MenuItemModel(R.drawable.institucional, "Institucional"),
+                new MenuItemModel(R.drawable.calendario, "Calendario"),
+                new MenuItemModel(R.drawable.clases, "Clases")
         );
         adapter.submit(items);
+        // para volver atras - welcome
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 }

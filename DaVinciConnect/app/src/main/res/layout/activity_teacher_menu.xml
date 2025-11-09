@@ -4,50 +4,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo_degrade"
+    android:fitsSystemWindows="true"
     tools:context=".ui.TeacherMenuActivity">
+
+    <!-- botón atrás -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="12dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="155dp"
+        android:layout_height="108dp"
+        android:layout_marginTop="2dp"
+        android:contentDescription="Logo DaVinci Connect"
+        android:src="@drawable/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.372"
+        app:layout_constraintStart_toEndOf="@id/btnBack"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/tvMenuTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Menú Profesor"
+        android:layout_marginTop="4dp"
+        android:text="Menú"
+        android:textColor="@android:color/white"
         android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/imgLogo" />
 
-    <ImageButton
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <!-- barra de búsqueda -->
+
+    <LinearLayout
+        android:id="@+id/searchContainer"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
         android:layout_marginStart="16dp"
-        android:src="@android:drawable/ic_menu_search"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintTop_toTopOf="@id/tvMenuTitle"
-        app:layout_constraintBottom_toBottomOf="@id/tvMenuTitle"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_chat_input"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvMenuTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Buscar en el menú"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:textColorHint="#AAFFFFFF"
+            android:textColor="@android:color/white"
+            android:paddingStart="8dp"
+            android:inputType="text"/>
+        <ImageButton
+            android:id="@+id/btnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_search"
+            app:layout_constraintBottom_toBottomOf="@id/tvMenuTitle"
+            app:layout_constraintTop_toTopOf="@id/tvMenuTitle"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            />
+    </LinearLayout>
 
+    <!-- botón menú  -->
     <ImageButton
         android:id="@+id/btnMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="12dp"
         android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
         android:src="@android:drawable/ic_menu_more"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintTop_toTopOf="@id/tvMenuTitle"
         app:layout_constraintBottom_toBottomOf="@id/tvMenuTitle"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.021" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMenu"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tvMenuTitle"
+        android:layout_width="342dp"
+        android:layout_height="518dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:overScrollMode="never"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tvMenuTitle"
+        app:layout_constraintVertical_bias="0.762"
+        tools:listitem="@layout/item_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
