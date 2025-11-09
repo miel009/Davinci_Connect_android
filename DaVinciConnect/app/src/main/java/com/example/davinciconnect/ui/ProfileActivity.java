@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.davinciconnect.R;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -20,12 +22,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
 
-    private EditText etDisplayName, etEmail, etPassword, etPin;
+    private EditText etDisplayName, etEmail, etPassword, etPin, etCurrentPassword;
     private Button btnUpdateDisplayName, btnUpdateEmail, btnUpdatePassword, btnUpdatePin;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +36,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        currentUser = mAuth.getCurrentUser();
 
         etDisplayName = findViewById(R.id.etDisplayName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etPin = findViewById(R.id.etPin);
+        etCurrentPassword = findViewById(R.id.etCurrentPassword);
 
         btnUpdateDisplayName = findViewById(R.id.btnUpdateDisplayName);
         btnUpdateEmail = findViewById(R.id.btnUpdateEmail);
@@ -56,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserProfile() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             etDisplayName.setText(currentUser.getDisplayName());
             etEmail.setText(currentUser.getEmail());
@@ -76,11 +78,14 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
                 .build();
 
-        currentUser.updateProfile(profileUpdates)
+        user.updateProfile(profileUpdates)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(ProfileActivity.this, "Nombre actualizado.", Toast.LENGTH_SHORT).show();
@@ -91,24 +96,42 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateEmail() {
-        String email = etEmail.getText().toString().trim();
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        String newEmail = etEmail.getText().toString().trim();
+        String currentPassword = etCurrentPassword.getText().toString().trim();
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
             Toast.makeText(this, "Por favor, introduce un email válido", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        currentUser.updateEmail(email)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(ProfileActivity.this, "Email actualizado. Verifica tu nueva dirección y vuelve a iniciar sesión.", Toast.LENGTH_LONG).show();
-                        FirebaseAuth.getInstance().signOut();
-                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
+        if (currentPassword.isEmpty()) {
+            Toast.makeText(this, "Por favor, introduce tu contraseña actual para continuar", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null || user.getEmail() == null) {
+            Toast.makeText(this, "No se pudo obtener la información del usuario.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+
+        user.reauthenticate(credential)
+                .addOnCompleteListener(reauth -> {
+                    if (reauth.isSuccessful()) {
+                        user.verifyBeforeUpdateEmail(newEmail)
+                                .addOnCompleteListener(verifyTask -> {
+                                    if (verifyTask.isSuccessful()) {
+                                        Toast.makeText(ProfileActivity.this, "Se ha enviado un correo de verificación a tu nueva dirección.", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Log.e(TAG, "Error sending verification email", verifyTask.getException());
+                                        Toast.makeText(ProfileActivity.this, "Error al enviar la verificación: " + verifyTask.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                });
                     } else {
-                        Log.e(TAG, "Error updating email", task.getException());
-                        Toast.makeText(ProfileActivity.this, "Error al actualizar el email: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Re-authentication failed", reauth.getException());
+                        Toast.makeText(ProfileActivity.this, "Error de autenticación. Verifica tu contraseña.", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -120,14 +143,20 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        currentUser.updatePassword(password)
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "No se pudo obtener la información del usuario.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        user.updatePassword(password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         etPassword.setText("");
                         Toast.makeText(ProfileActivity.this, "Contraseña actualizada.", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e(TAG, "Error updating password", task.getException());
-                        Toast.makeText(ProfileActivity.this, "Error al actualizar la contraseña: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ProfileActivity.this, "Error al actualizar la contraseña. Es posible que necesites volver a iniciar sesión.", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -139,7 +168,10 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        db.collection("users").document(currentUser.getUid())
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
+        db.collection("users").document(user.getUid())
                 .update("pin", pin)
                 .addOnSuccessListener(aVoid -> Toast.makeText(ProfileActivity.this, "PIN actualizado.", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Error al actualizar el PIN.", Toast.LENGTH_SHORT).show());
