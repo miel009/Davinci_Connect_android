@@ -59,7 +59,9 @@ public class StudentMenuActivity extends AppCompatActivity {
 
         startService(new Intent(this, AppLifecycleService.class));
         ImageButton btnSearch = findViewById(R.id.btnSearch);
+        ImageButton btnMenu = findViewById(R.id.btnMenu);
         btnSearch.setOnClickListener(v -> Toast.makeText(this, "Búsqueda no implementada", Toast.LENGTH_SHORT).show());
+        btnMenu.setOnClickListener(this::showCustomMenu);
     }
 
     private void showCustomMenu(View anchor) {
@@ -209,10 +211,13 @@ public class StudentMenuActivity extends AppCompatActivity {
                 new MenuItemModel(R.drawable.chat, "Chat Leo")
         );
         adapter.submit(items);
-
-        // volver atras
+// para volver atras - welcome
         ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish()
-        );
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
     }
 }

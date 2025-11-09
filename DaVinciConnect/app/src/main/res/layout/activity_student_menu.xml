@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo_degrade"
+    android:fitsSystemWindows="true"
     tools:context=".ui.StudentMenuActivity">
 
     <!-- botón atrás -->
@@ -18,6 +19,20 @@
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+    <!-- botón menú  -->
+
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="12dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_more"
+        app:layout_constraintBottom_toBottomOf="@id/tvMenuTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.021" />
 
     <ImageView
         android:id="@+id/imgLogo"
@@ -65,14 +80,19 @@
         <EditText
             android:id="@+id/etSearch"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:hint="Buscar en el menú"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
             android:textColorHint="#AAFFFFFF"
             android:textColor="@android:color/white"
             android:paddingStart="8dp"
             android:inputType="text"/>
+
 
         <ImageButton
             android:id="@+id/btnSearch"

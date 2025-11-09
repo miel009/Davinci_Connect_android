@@ -54,6 +54,8 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeManager.applyTheme(this);
+
+
         setContentView(R.layout.activity_calendar);
 
         try {
