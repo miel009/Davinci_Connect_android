@@ -31,7 +31,10 @@
             android:layout_height="wrap_content"
             android:text="Perfil"
             android:textColor="@android:color/white"
-            android:padding="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:background="?attr/selectableItemBackground"/>
 
         <TextView
@@ -40,7 +43,10 @@
             android:layout_height="wrap_content"
             android:text="Modo oscuro / claro"
             android:textColor="@android:color/white"
-            android:padding="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:background="?attr/selectableItemBackground"/>
 
         <TextView
@@ -49,7 +55,10 @@
             android:layout_height="wrap_content"
             android:text="Comentarios"
             android:textColor="@android:color/white"
-            android:padding="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:background="?attr/selectableItemBackground"/>
 
         <TextView
@@ -58,7 +67,10 @@
             android:layout_height="wrap_content"
             android:text="Contacto"
             android:textColor="@android:color/white"
-            android:padding="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:background="?attr/selectableItemBackground"/>
 
         <Space

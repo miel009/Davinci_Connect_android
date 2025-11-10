@@ -293,6 +293,9 @@ public class TeacherMenuActivity extends AppCompatActivity implements FileAdapte
             switch (item.label) {
                 case "Documentos": startActivity(new Intent(this, StorageActivity.class)); break;
                 case "Calendario": startActivity(new Intent(this, CalendarActivity.class)); break;
+                case "Temarios": startActivity(new Intent(this, TemariosActivity.class)); break;
+                case "Institucional": startActivity(new Intent(this, InstitutionalActivity.class)); break;
+                case "Clases": startActivity(new Intent(this, ClasesActivity.class)); break;
                 default: Toast.makeText(this, "Profesor → " + item.label, Toast.LENGTH_SHORT).show(); break;
             }
         });
