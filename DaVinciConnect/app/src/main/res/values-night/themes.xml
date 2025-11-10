@@ -3,5 +3,8 @@
     <style name="Base.Theme.DaVinciConnect" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <item name="android:windowBackground">@drawable/fondo_degrade</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
     </style>
 </resources>
