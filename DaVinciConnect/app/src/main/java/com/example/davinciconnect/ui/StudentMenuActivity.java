@@ -7,10 +7,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -21,7 +25,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,11 +48,12 @@ import java.util.List;
 public class StudentMenuActivity extends AppCompatActivity implements FileAdapter.OnFileOptionClickListener {
 
     private ShapeableImageView ivAvatar;
-    private RecyclerView rvSearchResultsOverlay;
+    private RecyclerView rvMenu;
     private FileAdapter searchAdapter;
+    private MenuAdapter menuAdapter;
     private List<StorageReference> searchResults;
     private StorageReference userRootRef;
-    private SearchView searchViewOverlay;
+    private EditText etSearch;
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
@@ -71,69 +75,58 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
 
         startService(new Intent(this, AppLifecycleService.class));
 
-
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             userRootRef = FirebaseStorage.getInstance().getReference("users").child(currentUser.getUid());
         }
 
+        etSearch = findViewById(R.id.etSearch);
         ImageButton btnSearch = findViewById(R.id.btnSearch);
-        btnSearch.setOnClickListener(v -> toggleSearchOverlay(true));
-
-        searchViewOverlay = findViewById(R.id.searchViewOverlay);
-        rvSearchResultsOverlay = findViewById(R.id.rvSearchResultsOverlay);
+        btnSearch.setOnClickListener(v -> performSearch(etSearch.getText().toString()));
+        
         setupSearch();
 
         ImageButton btnMenu = findViewById(R.id.btnMenu);
         btnMenu.setOnClickListener(this::showCustomMenu);
+
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void setupSearch() {
-        rvSearchResultsOverlay.setLayoutManager(new LinearLayoutManager(this));
         searchResults = new ArrayList<>();
         searchAdapter = new FileAdapter(searchResults, this);
-        rvSearchResultsOverlay.setAdapter(searchAdapter);
-
-        searchViewOverlay.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        
+        etSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                performSearch(query);
-                return true;
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    searchResults.clear();
-                    searchAdapter.notifyDataSetChanged();
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().isEmpty()) {
+                    restoreMainMenu();
                 } else {
-                    performSearch(newText);
+                    performSearch(s.toString());
                 }
-                return true;
             }
-        });
-        searchViewOverlay.setOnCloseListener(() -> {
-            toggleSearchOverlay(false);
-            return true;
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
     }
-
-    private void toggleSearchOverlay(boolean show) {
-        int visibility = show ? View.VISIBLE : View.GONE;
-        searchViewOverlay.setVisibility(visibility);
-        rvSearchResultsOverlay.setVisibility(visibility);
-        if(show) {
-            searchViewOverlay.setIconified(false);
-            searchViewOverlay.requestFocus();
-        } else {
-            searchResults.clear();
-            searchAdapter.notifyDataSetChanged();
-        }
+    
+    private void restoreMainMenu() {
+        rvMenu.setLayoutManager(new GridLayoutManager(this, 2));
+        rvMenu.setAdapter(menuAdapter);
     }
 
     private void performSearch(String query) {
+        rvMenu.setLayoutManager(new LinearLayoutManager(this));
+        rvMenu.setAdapter(searchAdapter);
         searchResults.clear();
+        
         if (userRootRef == null) return;
+        
         userRootRef.listAll().addOnSuccessListener(listResult -> {
             for (StorageReference folderRef : listResult.getPrefixes()) {
                 if (!folderRef.getName().equals("Privado")) {
@@ -215,7 +208,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
     }
 
     private void showPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_password, null);
         builder.setView(dialogView);
@@ -232,7 +225,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
                             if (task.isSuccessful()) {
                                 startActivity(new Intent(this, ProfileActivity.class));
                             } else {
-                                Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                                CustomToast.show(this, "Contraseña incorrecta", Toast.LENGTH_SHORT);
                             }
                         });
                 }
@@ -276,10 +269,10 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
 
                 user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
+                        CustomToast.show(this, "Foto de perfil actualizada", Toast.LENGTH_SHORT);
                         Glide.with(this).load(downloadUrl).into(ivAvatar);
                     } else {
-                        Toast.makeText(this, "Error al actualizar el perfil", Toast.LENGTH_SHORT).show();
+                        CustomToast.show(this, "Error al actualizar el perfil", Toast.LENGTH_SHORT);
                     }
                 });
             });
@@ -287,10 +280,19 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
     }
 
     private void setupMainMenu() {
-        RecyclerView rv = findViewById(R.id.rvMenu);
-        rv.setLayoutManager(new GridLayoutManager(this, 2));
-        rv.setHasFixedSize(true);
-        MenuAdapter adapter = new MenuAdapter((item, pos) -> {
+        rvMenu = findViewById(R.id.rvMenu);
+        rvMenu.setLayoutManager(new GridLayoutManager(this, 2));
+        rvMenu.setHasFixedSize(true);
+        List<MenuItemModel> items = Arrays.asList(
+            new MenuItemModel(R.drawable.documentos, "Documentos"),
+            new MenuItemModel(R.drawable.campus, "Campus"),
+            new MenuItemModel(R.drawable.asignaturas, "Asignaturas"),
+            new MenuItemModel(R.drawable.calificaciones, "Calificaciones"),
+            new MenuItemModel(R.drawable.calendario, "Calendario"),
+            new MenuItemModel(R.drawable.chat, "Chat Leo")
+        );
+
+        menuAdapter = new MenuAdapter((item, pos) -> {
             switch (item.label) {
                 case "Documentos": startActivity(new Intent(this, StorageActivity.class)); break;
                 case "Calendario": startActivity(new Intent(this, CalendarActivity.class)); break;
@@ -298,27 +300,11 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
                 case "Asignaturas": startActivity(new Intent(this, AsignaturasActivity.class)); break;
                 case "Calificaciones": startActivity(new Intent(this, CalificacionesActivity.class)); break;
                 case "Campus": startActivity(new Intent(this, CampusActivity.class)); break;
-                default: Toast.makeText(this, "Alumno → " + item.label, Toast.LENGTH_SHORT).show(); break;
+                default: CustomToast.show(this, "Alumno → " + item.label, Toast.LENGTH_SHORT);
             }
         });
-        rv.setAdapter(adapter);
-        List<MenuItemModel> items = Arrays.asList(
-                new MenuItemModel(R.drawable.documentos, "Documentos"),
-                new MenuItemModel(R.drawable.campus, "Campus"),
-                new MenuItemModel(R.drawable.asignaturas, "Asignaturas"),
-                new MenuItemModel(R.drawable.calificaciones, "Calificaciones"),
-                new MenuItemModel(R.drawable.calendario, "Calendario"),
-                new MenuItemModel(R.drawable.chat, "Chat Leo")
-        );
-        adapter.submit(items);
-// para volver atras - welcome
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(this, WelcomeActivity.class);
-            startActivity(intent);
-            finish();
-        });
-
+        menuAdapter.submit(items);
+        rvMenu.setAdapter(menuAdapter);
     }
 
     @Override
@@ -336,7 +322,6 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
         startActivity(intent);
     }
 
-    // Implement other methods from FileAdapter.OnFileOptionClickListener as needed, possibly with no-ops
     @Override
     public void onMoveClick(StorageReference itemToMove, boolean isFolder) {}
 

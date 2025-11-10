@@ -22,12 +22,12 @@ public class CampusActivity extends AppCompatActivity implements FolderAdapter.O
         rvCampus.setLayoutManager(new LinearLayoutManager(this));
 
         List<Folder> campusList = new ArrayList<>();
-        campusList.add(new Folder("Campus Virtual", R.drawable.ic_launcher_foreground));
-        campusList.add(new Folder("Control Escolar", R.drawable.ic_launcher_foreground));
-        campusList.add(new Folder("Credenciales", R.drawable.ic_launcher_foreground));
-        campusList.add(new Folder("Correo Institucional", R.drawable.ic_launcher_foreground));
-        campusList.add(new Folder("Orden de Pago", R.drawable.ic_launcher_foreground));
-        campusList.add(new Folder("Videotutoriales", R.drawable.ic_launcher_foreground));
+        campusList.add(new Folder("Campus Virtual", R.drawable.campus_virtual));
+        campusList.add(new Folder("Control Escolar", R.drawable.control_escolar));
+        campusList.add(new Folder("Credenciales", R.drawable.credenciales));
+        campusList.add(new Folder("Correo Institucional", R.drawable.correo_institucional));
+        campusList.add(new Folder("Orden de Pago", R.drawable.orden_de_pago));
+        campusList.add(new Folder("Videotutoriales", R.drawable.videotutoriales));
 
         FolderAdapter adapter = new FolderAdapter(campusList, this);
         rvCampus.setAdapter(adapter);

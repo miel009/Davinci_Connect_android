@@ -36,19 +36,19 @@ public class StorageActivity extends AppCompatActivity implements FolderAdapter.
         rvFolders.setLayoutManager(new GridLayoutManager(this, 3));
 
         List<Folder> folderList = new ArrayList<>();
-        folderList.add(new Folder("General", android.R.drawable.ic_menu_agenda));
-        folderList.add(new Folder("Codigo", android.R.drawable.ic_menu_myplaces));
-        folderList.add(new Folder("Sincronización", android.R.drawable.ic_menu_share));
-        folderList.add(new Folder("Varios", android.R.drawable.ic_menu_gallery));
-        folderList.add(new Folder("Carpeta", android.R.drawable.ic_menu_directions));
-        folderList.add(new Folder("Estadisticas", android.R.drawable.ic_menu_sort_by_size));
-        folderList.add(new Folder("Claves", android.R.drawable.ic_menu_crop));
-        folderList.add(new Folder("Usuarios", android.R.drawable.ic_menu_my_calendar));
-        folderList.add(new Folder("Backup", android.R.drawable.ic_menu_save));
-        folderList.add(new Folder("Archivos", android.R.drawable.ic_menu_save));
-        folderList.add(new Folder("Correo", android.R.drawable.ic_menu_send));
-        folderList.add(new Folder("Video", android.R.drawable.ic_media_play));
-        folderList.add(new Folder("Privado", android.R.drawable.ic_lock_lock));
+        folderList.add(new Folder("General", R.drawable.general));
+        folderList.add(new Folder("Codigo", R.drawable.codigo));
+        folderList.add(new Folder("Sincronización", R.drawable.sincronizacion));
+        folderList.add(new Folder("Varios", R.drawable.varios));
+        folderList.add(new Folder("Carpeta", R.drawable.carpeta));
+        folderList.add(new Folder("Estadisticas", R.drawable.estadisticas));
+        folderList.add(new Folder("Claves", R.drawable.claves));
+        folderList.add(new Folder("Usuarios", R.drawable.usuarios));
+        folderList.add(new Folder("Backup", R.drawable.backup));
+        folderList.add(new Folder("Archivos", R.drawable.archivos));
+        folderList.add(new Folder("Correo", R.drawable.correo));
+        folderList.add(new Folder("Video", R.drawable.video));
+        folderList.add(new Folder("Privado", R.drawable.privado));
 
         FolderAdapter adapter = new FolderAdapter(folderList, this);
         rvFolders.setAdapter(adapter);
@@ -89,7 +89,7 @@ public class StorageActivity extends AppCompatActivity implements FolderAdapter.
     }
 
     private void showCreatePinDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
         builder.setTitle("Crear PIN para Carpeta Privada");
 
         final EditText input = new EditText(this);
@@ -119,7 +119,7 @@ public class StorageActivity extends AppCompatActivity implements FolderAdapter.
     }
 
     private void showEnterPinDialog(String correctPin) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
         builder.setTitle("Introduce tu PIN");
 
         final EditText input = new EditText(this);

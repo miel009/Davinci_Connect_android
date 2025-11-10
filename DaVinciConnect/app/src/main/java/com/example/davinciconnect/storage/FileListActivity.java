@@ -103,7 +103,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
     public void onMoveClick(StorageReference itemToMove, boolean isFolder) {
         final String[] folders = {"General", "Codigo", "Sincronización", "Varios", "Carpeta", "Estadisticas", "Claves", "Usuarios", "Backup", "Archivos", "Correo", "Video", "Privado"};
         
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
         builder.setTitle("Mover a...");
         builder.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, folders), (dialog, which) -> {
             String destinationFolderName = folders[which];
@@ -127,7 +127,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
             Toast.makeText(this, "Renombrar carpetas no está implementado.", Toast.LENGTH_SHORT).show();
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
         builder.setTitle("Renombrar Archivo");
         final EditText input = new EditText(this);
         input.setText(itemRef.getName());
@@ -153,7 +153,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
 
     @Override
     public void onDeleteClick(StorageReference itemRef, boolean isFolder) {
-         new AlertDialog.Builder(this)
+         new AlertDialog.Builder(this, R.style.CustomAlertDialog)
             .setTitle("Confirmar eliminación")
             .setMessage("¿Estás seguro de que quieres eliminar '" + itemRef.getName() + "'?")
             .setPositiveButton("Eliminar", (dialog, which) -> {

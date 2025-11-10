@@ -129,7 +129,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
     }
 
     private void showEditEventDialog(final Event eventToEdit, String description, String time) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
         builder.setTitle(eventToEdit == null ? "Añadir evento" : "Editar evento");
 
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_event, null);
@@ -189,7 +189,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
     }
 
     private void deleteEvent(Event event) {
-        new AlertDialog.Builder(this).setTitle("Confirmar eliminación").setMessage("¿Estás seguro de que quieres eliminar este evento?").setPositiveButton("Eliminar", (dialog, which) -> {
+        new AlertDialog.Builder(this, R.style.CustomAlertDialog).setTitle("Confirmar eliminación").setMessage("¿Estás seguro de que quieres eliminar este evento?").setPositiveButton("Eliminar", (dialog, which) -> {
             cancelNotification(event);
             DatabaseReference eventRef = userEventsReference.child(selectedDate).child(event.getId());
             eventRef.removeValue().addOnSuccessListener(aVoid -> {
@@ -202,7 +202,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
     private void scheduleNotification(Event event) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-             new AlertDialog.Builder(this).setTitle("Permiso Requerido").setMessage("Para asegurar que las notificaciones lleguen a tiempo, por favor concede el permiso para programar alarmas exactas.").setPositiveButton("Ir a Ajustes", (d, w) -> {
+             new AlertDialog.Builder(this, R.style.CustomAlertDialog).setTitle("Permiso Requerido").setMessage("Para asegurar que las notificaciones lleguen a tiempo, por favor concede el permiso para programar alarmas exactas.").setPositiveButton("Ir a Ajustes", (d, w) -> {
                 Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                 startActivity(intent);
             }).setNegativeButton("Cancelar", null).show();

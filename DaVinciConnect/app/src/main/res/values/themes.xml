@@ -6,7 +6,15 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="alertDialogTheme">@style/CustomAlertDialog</item>
     </style>
 
     <style name="Theme.DaVinciConnect" parent="Base.Theme.DaVinciConnect" />
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+        <item name="colorAccent">#D1C4E9</item> <!-- Light Violet for buttons -->
+        <item name="android:textColorPrimary">@android:color/white</item> <!-- Title color -->
+        <item name="android:textColor">#E0E0E0</item> <!-- Body text color -->
+    </style>
 </resources>

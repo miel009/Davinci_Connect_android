@@ -23,13 +23,13 @@ public class TemariosActivity extends AppCompatActivity implements FolderAdapter
         rvTemarios.setLayoutManager(new LinearLayoutManager(this));
 
         List<Folder> temariosList = new ArrayList<>();
-        temariosList.add(new Folder("Materia 1ABC", R.drawable.ic_launcher_foreground));
-        temariosList.add(new Folder("Materia 2ABC", R.drawable.ic_launcher_foreground));
-        temariosList.add(new Folder("Materia 3ABC", R.drawable.ic_launcher_foreground));
-        temariosList.add(new Folder("Materia 4ABC", R.drawable.ic_launcher_foreground));
-        temariosList.add(new Folder("Materia 5ABC", R.drawable.ic_launcher_foreground));
-        temariosList.add(new Folder("Materia 6ABC", R.drawable.ic_launcher_foreground));
-        temariosList.add(new Folder("Materia 7ABC", R.drawable.ic_launcher_foreground));
+        temariosList.add(new Folder("Materia 1ABC", R.drawable.materia_1abc));
+        temariosList.add(new Folder("Materia 2ABC", R.drawable.materia_2abc));
+        temariosList.add(new Folder("Materia 3ABC", R.drawable.materia_3abc));
+        temariosList.add(new Folder("Materia 4ABC", R.drawable.materia_4abc));
+        temariosList.add(new Folder("Materia 5ABC", R.drawable.materia_5abc));
+        temariosList.add(new Folder("Materia 6ABC", R.drawable.materia_6abc));
+        temariosList.add(new Folder("Materia 7ABC", R.drawable.materia_7abc));
 
         FolderAdapter adapter = new FolderAdapter(temariosList, this);
         rvTemarios.setAdapter(adapter);
