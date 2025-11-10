@@ -54,8 +54,6 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeManager.applyTheme(this);
-
-
         setContentView(R.layout.activity_calendar);
 
         try {
@@ -87,10 +85,18 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
                     Toast.makeText(CalendarActivity.this, "Por favor, selecciona una fecha primero", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                showAddEventDialog();
+                showAddEventDialog(null, null);
             });
 
-            initializeWithToday();
+            if (getIntent().hasExtra("EVENT_DESCRIPTION")) {
+                String description = getIntent().getStringExtra("EVENT_DESCRIPTION");
+                String date = getIntent().getStringExtra("EVENT_DATE");
+                String time = getIntent().getStringExtra("EVENT_TIME");
+                selectedDate = date;
+                showAddEventDialog(description, time);
+            } else {
+                initializeWithToday();
+            }
 
         } catch (Throwable t) {
             Log.e("CalendarActivity", "Error FATAL en onCreate", t);
@@ -117,12 +123,12 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
         loadEventsForDate(selectedDate);
     }
 
-    private void showAddEventDialog() {
+    private void showAddEventDialog(String description, String time) {
         selectedTime = "";
-        showEditEventDialog(null);
+        showEditEventDialog(null, description, time);
     }
 
-    private void showEditEventDialog(final Event eventToEdit) {
+    private void showEditEventDialog(final Event eventToEdit, String description, String time) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(eventToEdit == null ? "Añadir evento" : "Editar evento");
 
@@ -136,6 +142,10 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
             descriptionInput.setText(eventToEdit.getDescription());
             timeTextView.setText(eventToEdit.getTime());
             selectedTime = eventToEdit.getTime();
+        } else if (description != null) {
+            descriptionInput.setText(description);
+            timeTextView.setText(time);
+            selectedTime = time;
         }
 
         selectTimeButton.setOnClickListener(v -> {
@@ -148,16 +158,16 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
         });
 
         builder.setPositiveButton("Guardar", (dialog, which) -> {
-            String description = descriptionInput.getText().toString();
-            if (!description.isEmpty() && !selectedTime.isEmpty()) {
+            String newDescription = descriptionInput.getText().toString();
+            if (!newDescription.isEmpty() && !selectedTime.isEmpty()) {
                 if (eventToEdit == null) {
                     DatabaseReference newEventRef = userEventsReference.child(selectedDate).push();
                     String eventId = newEventRef.getKey();
-                    Event newEvent = new Event(eventId, description, selectedTime);
+                    Event newEvent = new Event(eventId, newDescription, selectedTime);
                     saveEventToFirebase(newEventRef, newEvent, true);
                 } else {
                     cancelNotification(eventToEdit);
-                    eventToEdit.setDescription(description);
+                    eventToEdit.setDescription(newDescription);
                     eventToEdit.setTime(selectedTime);
                     DatabaseReference eventRef = userEventsReference.child(selectedDate).child(eventToEdit.getId());
                     saveEventToFirebase(eventRef, eventToEdit, true);
@@ -255,7 +265,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
 
     @Override
     public void onEditClick(Event event) {
-        showEditEventDialog(event);
+        showEditEventDialog(event, null, null);
     }
 
     @Override

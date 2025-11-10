@@ -49,8 +49,7 @@
         <activity android:name=".ui.ChatIntroActivity" android:exported="false" />
         <activity android:name=".ui.TeacherMenuActivity" android:exported="false" />
         <activity android:name=".ui.StudentMenuActivity" android:exported="false" />
-        <activity android:name=".ui.chat.ChatLeoActivity" android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".ui.chat.ChatLeoActivity" android:exported="false" />
         <activity android:name=".storage.StorageActivity" android:exported="false" />
         <activity android:name=".storage.FileListActivity" android:exported="false" />
         <activity android:name=".storage.SearchActivity" android:exported="false" />
@@ -65,6 +64,13 @@
         <activity android:name=".ui.ControlEscolarActivity" android:exported="false" />
         <activity android:name=".ui.CorreoActivity" android:exported="false" />
         <activity android:name=".ui.OrdenPagoActivity" android:exported="false" />
+        <activity android:name=".ui.CampusTeacherActivity" android:exported="false" />
+        <activity android:name=".ui.StudentAttendanceActivity" android:exported="false" />
+        <activity android:name=".ui.ControlEscolarMateriasActivity" android:exported="false" />
+        <activity android:name=".ui.TutoriasActivity" android:exported="false" />
+        <activity android:name=".ui.VideotutoriasActivity" android:exported="false" />
+        <activity android:name=".ui.CapacitacionesActivity" android:exported="false" />
+        <activity android:name=".ui.CapacitacionListActivity" android:exported="false" />
         <activity android:name=".ui.ProfileActivity" android:exported="false" /> <!-- Nueva Actividad -->
 
         <activity
