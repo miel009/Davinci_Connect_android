@@ -71,6 +71,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
 
         startService(new Intent(this, AppLifecycleService.class));
 
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             userRootRef = FirebaseStorage.getInstance().getReference("users").child(currentUser.getUid());
@@ -302,14 +303,22 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
         });
         rv.setAdapter(adapter);
         List<MenuItemModel> items = Arrays.asList(
-            new MenuItemModel(android.R.drawable.ic_menu_agenda, "Documentos"),
-            new MenuItemModel(android.R.drawable.ic_dialog_map, "Campus"),
-            new MenuItemModel(android.R.drawable.ic_menu_info_details, "Asignaturas"),
-            new MenuItemModel(android.R.drawable.ic_menu_sort_by_size, "Calificaciones"),
-            new MenuItemModel(android.R.drawable.ic_menu_my_calendar, "Calendario"),
-            new MenuItemModel(android.R.drawable.ic_btn_speak_now, "Chat Leo")
+                new MenuItemModel(R.drawable.documentos, "Documentos"),
+                new MenuItemModel(R.drawable.campus, "Campus"),
+                new MenuItemModel(R.drawable.asignaturas, "Asignaturas"),
+                new MenuItemModel(R.drawable.calificaciones, "Calificaciones"),
+                new MenuItemModel(R.drawable.calendario, "Calendario"),
+                new MenuItemModel(R.drawable.chat, "Chat Leo")
         );
         adapter.submit(items);
+// para volver atras - welcome
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
     }
 
     @Override

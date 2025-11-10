@@ -49,7 +49,8 @@
         <activity android:name=".ui.ChatIntroActivity" android:exported="false" />
         <activity android:name=".ui.TeacherMenuActivity" android:exported="false" />
         <activity android:name=".ui.StudentMenuActivity" android:exported="false" />
-        <activity android:name=".ui.chat.ChatLeoActivity" android:exported="false" />
+        <activity android:name=".ui.chat.ChatLeoActivity" android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".storage.StorageActivity" android:exported="false" />
         <activity android:name=".storage.FileListActivity" android:exported="false" />
         <activity android:name=".storage.SearchActivity" android:exported="false" />

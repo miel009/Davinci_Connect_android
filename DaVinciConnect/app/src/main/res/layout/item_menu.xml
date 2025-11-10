@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     android:padding="12dp"
-    android:background="?attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/imgIcon"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- F¿fondo circular  -->
+    <FrameLayout
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:background="@drawable/bg_menu_circle"
+        android:layout_gravity="center"
+        android:elevation="3dp">
+        <ImageView
+            android:id="@+id/imgIcon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:contentDescription="icono del menú" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvLabel"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Título"
-        android:textSize="14sp"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/imgIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"/>
+</LinearLayout>
