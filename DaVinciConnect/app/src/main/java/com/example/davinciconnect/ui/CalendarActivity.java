@@ -45,7 +45,7 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
 
     private static final int NOTIFICATION_PERMISSION_CODE = 101;
     private String selectedDate;
-    private DatabaseReference userEventsReference; // <-- Referencia específica del usuario
+    private DatabaseReference userEventsReference;
     private EventAdapter eventAdapter;
     private List<Event> eventList = new ArrayList<>();
     private String selectedTime = "";
@@ -61,7 +61,6 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
         try {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser == null) {
-                // Si no hay usuario, no se puede continuar. Redirigir al login.
                 Toast.makeText(this, "Usuario no autenticado.", Toast.LENGTH_SHORT).show();
                 finish();
                 return;
@@ -99,8 +98,6 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
             finish();
         }
     }
-    
-    // ... (el resto de los métodos permanecen casi iguales, pero usarán userEventsReference)
 
     private void requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -110,9 +107,13 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
         }
     }
 
-    private void initializeWithToday() {
+    private String getTodayDateString() {
         Calendar cal = Calendar.getInstance();
-        selectedDate = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH);
+        return cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH);
+    }
+
+    private void initializeWithToday() {
+        selectedDate = getTodayDateString();
         loadEventsForDate(selectedDate);
     }
 
@@ -236,6 +237,11 @@ public class CalendarActivity extends AppCompatActivity implements EventAdapter.
                         if (event != null) {
                             eventList.add(event);
                         }
+                    }
+                } else {
+                    if (date.equals(getTodayDateString())) {
+                        eventList.add(new Event("mock-1", "Ejemplo: Reunión de Proyecto", "10:00"));
+                        eventList.add(new Event("mock-2", "Ejemplo: Entrega de Tarea", "18:30"));
                     }
                 }
                 eventAdapter.notifyDataSetChanged();

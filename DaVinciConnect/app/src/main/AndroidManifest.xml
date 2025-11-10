@@ -53,7 +53,12 @@
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".storage.StorageActivity" android:exported="false" />
         <activity android:name=".storage.FileListActivity" android:exported="false" />
+        <activity android:name=".storage.SearchActivity" android:exported="false" />
         <activity android:name=".ui.CalendarActivity" android:exported="false" />
+        <activity android:name=".ui.InstitutionalActivity" android:exported="false" />
+        <activity android:name=".ui.StaticPageActivity" android:exported="false" />
+        <activity android:name=".ui.TemariosActivity" android:exported="false" />
+        <activity android:name=".ui.ClasesActivity" android:exported="false" />
         <activity android:name=".ui.ProfileActivity" android:exported="false" /> <!-- Nueva Actividad -->
 
         <activity

@@ -32,6 +32,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="Nuevo correo electrónico" />
+    <EditText
+        android:id="@+id/etCurrentPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña actual"
+        android:inputType="textPassword" />
     <Button
         android:id="@+id/btnUpdateEmail"
         android:layout_width="wrap_content"
@@ -59,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="Nuevo PIN de 4 dígitos"
-        android:inputType="numberPassword"
+        android.inputType="numberPassword"
         android:maxLength="4" />
     <Button
         android:id="@+id/btnUpdatePin"
