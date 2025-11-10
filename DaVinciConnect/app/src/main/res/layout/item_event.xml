@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="16sp"
+        android:textColor="@color/white"
         android:text="14:30 - Examen" />
 
     <ImageButton

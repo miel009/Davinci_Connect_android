@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.davinciconnect.R;
+import com.example.davinciconnect.ui.ThemeManager;
 import com.example.davinciconnect.ui.chat.ChatAdapter;
 import com.example.davinciconnect.ui.chat.ChatMessage;
 import com.example.davinciconnect.ui.chat.ChatService;
@@ -24,16 +25,23 @@ public class ChatLeoActivity extends AppCompatActivity {
     private RecyclerView rv;
     private ChatAdapter adapter;
     private EditText input;
-    private ImageButton btnSend;
+    private ImageButton btnSend,btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_leo);
+        ThemeManager.applyTheme(this);         setContentView(R.layout.activity_chat_leo);
 
         rv = findViewById(R.id.rvChat);
         input = findViewById(R.id.etMessage);
         btnSend = findViewById(R.id.btnSend);
+        btnBack = findViewById(R.id.btnBack);
+
+        //botón volver
+        btnBack.setOnClickListener(v -> {
+            finish(); // cierra esta Activity y vuelve a la anterior
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        });
 
         adapter = new ChatAdapter();
         rv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, true));
