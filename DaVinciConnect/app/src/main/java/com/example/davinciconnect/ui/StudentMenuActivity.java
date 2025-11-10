@@ -294,6 +294,9 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
                 case "Documentos": startActivity(new Intent(this, StorageActivity.class)); break;
                 case "Calendario": startActivity(new Intent(this, CalendarActivity.class)); break;
                 case "Chat Leo": startActivity(new Intent(this, ChatIntroActivity.class)); break;
+                case "Asignaturas": startActivity(new Intent(this, AsignaturasActivity.class)); break;
+                case "Calificaciones": startActivity(new Intent(this, CalificacionesActivity.class)); break;
+                case "Campus": startActivity(new Intent(this, CampusActivity.class)); break;
                 default: Toast.makeText(this, "Alumno → " + item.label, Toast.LENGTH_SHORT).show(); break;
             }
         });

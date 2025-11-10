@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tvMateriaName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Sistemas de bienestar (1)" />
+
+    <TextView
+        android:id="@+id/tvCalificacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(0.0-100.0)"
+        android:layout_marginEnd="8dp"/>
+
+    <TextView
+        android:id="@+id/tvNota"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="-"
+        android:gravity="center"
+        android:background="@drawable/circle_background"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_media_play"/>
+
+</LinearLayout>
