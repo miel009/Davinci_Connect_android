@@ -7,8 +7,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -103,13 +105,15 @@ public class TeacherMenuActivity extends AppCompatActivity implements FileAdapte
                 if (newText.isEmpty()) {
                     searchResults.clear();
                     searchAdapter.notifyDataSetChanged();
+                } else {
+                    performSearch(newText);
                 }
                 return true;
             }
         });
         searchViewOverlay.setOnCloseListener(() -> {
             toggleSearchOverlay(false);
-            return false;
+            return true;
         });
     }
 
@@ -117,7 +121,13 @@ public class TeacherMenuActivity extends AppCompatActivity implements FileAdapte
         int visibility = show ? View.VISIBLE : View.GONE;
         searchViewOverlay.setVisibility(visibility);
         rvSearchResultsOverlay.setVisibility(visibility);
-        if(show) searchViewOverlay.requestFocus();
+        if(show) {
+            searchViewOverlay.setIconified(false);
+            searchViewOverlay.requestFocus();
+        } else {
+            searchResults.clear();
+            searchAdapter.notifyDataSetChanged();
+        }
     }
 
     private void performSearch(String query) {
@@ -153,12 +163,15 @@ public class TeacherMenuActivity extends AppCompatActivity implements FileAdapte
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_menu_with_avatar, null);
 
-        final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.70);
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, ViewGroup.LayoutParams.MATCH_PARENT, true);
 
         ivAvatar = popupView.findViewById(R.id.ivAvatar);
         TextView tvUserName = popupView.findViewById(R.id.tvUserName);
 
         loadAvatarAndName(tvUserName);
+
+        popupView.findViewById(R.id.btnCloseMenu).setOnClickListener(v -> popupWindow.dismiss());
 
         ivAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -197,9 +210,7 @@ public class TeacherMenuActivity extends AppCompatActivity implements FileAdapte
             popupWindow.dismiss();
         });
 
-        popupWindow.setBackgroundDrawable(new BitmapDrawable());
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.showAsDropDown(anchor);
+        popupWindow.showAtLocation(anchor, Gravity.END, 0, 0);
     }
 
     private void showPasswordDialog() {
