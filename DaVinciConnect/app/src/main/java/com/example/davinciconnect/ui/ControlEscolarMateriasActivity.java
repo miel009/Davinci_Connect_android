@@ -3,7 +3,7 @@ package com.example.davinciconnect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.Folder;
@@ -19,16 +19,16 @@ public class ControlEscolarMateriasActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_control_escolar_materias);
 
         RecyclerView rvMaterias = findViewById(R.id.rvMaterias);
-        rvMaterias.setLayoutManager(new LinearLayoutManager(this));
+        rvMaterias.setLayoutManager(new GridLayoutManager(this, 2));
 
         List<Folder> materiasList = new ArrayList<>();
-        materiasList.add(new Folder("Materia 1ABC", R.drawable.ic_launcher_foreground));
-        materiasList.add(new Folder("Materia 2ABC", R.drawable.ic_launcher_foreground));
-        materiasList.add(new Folder("Materia 3ABC", R.drawable.ic_launcher_foreground));
-        materiasList.add(new Folder("Materia 4ABC", R.drawable.ic_launcher_foreground));
-        materiasList.add(new Folder("Materia 5ABC", R.drawable.ic_launcher_foreground));
-        materiasList.add(new Folder("Materia 6ABC", R.drawable.ic_launcher_foreground));
-        materiasList.add(new Folder("Materia 7ABC", R.drawable.ic_launcher_foreground));
+        materiasList.add(new Folder("Materia 1ABC", R.drawable.materia_1abc));
+        materiasList.add(new Folder("Materia 2ABC", R.drawable.materia_2abc));
+        materiasList.add(new Folder("Materia 3ABC", R.drawable.materia_3abc));
+        materiasList.add(new Folder("Materia 4ABC", R.drawable.materia_4abc));
+        materiasList.add(new Folder("Materia 5ABC", R.drawable.materia_5abc));
+        materiasList.add(new Folder("Materia 6ABC", R.drawable.materia_6abc));
+        materiasList.add(new Folder("Materia 7ABC", R.drawable.materia_7abc));
 
         FolderAdapter adapter = new FolderAdapter(materiasList, this);
         rvMaterias.setAdapter(adapter);

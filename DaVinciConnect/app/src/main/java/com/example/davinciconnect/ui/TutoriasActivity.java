@@ -3,7 +3,7 @@ package com.example.davinciconnect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.Folder;
@@ -19,16 +19,16 @@ public class TutoriasActivity extends AppCompatActivity implements FolderAdapter
         setContentView(R.layout.activity_tutorias);
 
         RecyclerView rvTutorias = findViewById(R.id.rvTutorias);
-        rvTutorias.setLayoutManager(new LinearLayoutManager(this));
+        rvTutorias.setLayoutManager(new GridLayoutManager(this, 2));
 
         List<Folder> tutoriasList = new ArrayList<>();
-        tutoriasList.add(new Folder("Materia 1ABC", R.drawable.ic_launcher_foreground));
-        tutoriasList.add(new Folder("Materia 2ABC", R.drawable.ic_launcher_foreground));
-        tutoriasList.add(new Folder("Materia 3ABC", R.drawable.ic_launcher_foreground));
-        tutoriasList.add(new Folder("Materia 4ABC", R.drawable.ic_launcher_foreground));
-        tutoriasList.add(new Folder("Materia 5ABC", R.drawable.ic_launcher_foreground));
-        tutoriasList.add(new Folder("Materia 6ABC", R.drawable.ic_launcher_foreground));
-        tutoriasList.add(new Folder("Materia 7ABC", R.drawable.ic_launcher_foreground));
+        tutoriasList.add(new Folder("Materia 1ABC", R.drawable.materia_1abc));
+        tutoriasList.add(new Folder("Materia 2ABC", R.drawable.materia_2abc));
+        tutoriasList.add(new Folder("Materia 3ABC", R.drawable.materia_3abc));
+        tutoriasList.add(new Folder("Materia 4ABC", R.drawable.materia_4abc));
+        tutoriasList.add(new Folder("Materia 5ABC", R.drawable.materia_5abc));
+        tutoriasList.add(new Folder("Materia 6ABC", R.drawable.materia_6abc));
+        tutoriasList.add(new Folder("Materia 7ABC", R.drawable.materia_7abc));
 
         FolderAdapter adapter = new FolderAdapter(tutoriasList, this);
         rvTutorias.setAdapter(adapter);
