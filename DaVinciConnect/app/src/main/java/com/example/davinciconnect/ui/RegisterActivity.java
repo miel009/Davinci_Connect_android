@@ -1,10 +1,19 @@
 package com.example.davinciconnect.ui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.davinciconnect.R;
@@ -18,6 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private EditText editName, editEmail, editPassword;
     private Button btnCreate;
+    private TextView tvLogin;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private String selectedRole; // recibido de RoleSelectionActivity
@@ -37,8 +47,35 @@ public class RegisterActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         btnCreate = findViewById(R.id.btnCreate);
+        tvLogin = findViewById(R.id.tvLogin);
 
         btnCreate.setOnClickListener(v -> createAccount());
+
+        // Make "Inicia Sesión" clickable
+        String fullText = "¿Ya tienes una cuenta? Inicia Sesión.";
+        String linkText = "Inicia Sesión";
+        SpannableString ss = new SpannableString(fullText);
+
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                startActivity(new Intent(RegisterActivity.this, RoleSelectionActivity.class));
+            }
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+                ds.setColor(Color.parseColor("#B39DDB")); // Light Violet
+            }
+        };
+
+        int startIndex = fullText.indexOf(linkText);
+        int endIndex = startIndex + linkText.length();
+        ss.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        tvLogin.setText(ss);
+        tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
+        tvLogin.setHighlightColor(Color.TRANSPARENT);
     }
 
     private void createAccount() {

@@ -88,9 +88,6 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
 
         ImageButton btnMenu = findViewById(R.id.btnMenu);
         btnMenu.setOnClickListener(this::showCustomMenu);
-
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
     }
 
     private void setupSearch() {

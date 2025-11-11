@@ -88,16 +88,6 @@ public class TeacherMenuActivity extends AppCompatActivity implements FileAdapte
 
         ImageButton btnMenu = findViewById(R.id.btnMenu);
         btnMenu.setOnClickListener(this::showCustomMenu);
-
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> {
-            if (rvMenu.getAdapter() == searchAdapter) {
-                etSearch.setText("");
-                restoreMainMenu();
-            } else {
-                finish();
-            }
-        });
     }
 
     private void setupSearch() {
@@ -312,14 +302,6 @@ public class TeacherMenuActivity extends AppCompatActivity implements FileAdapte
         });
         menuAdapter.submit(items);
         rvMenu.setAdapter(menuAdapter);
-
-        // para volver atras - welcome
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(this, WelcomeActivity.class);
-            startActivity(intent);
-            finish();
-        });
     }
 
     @Override

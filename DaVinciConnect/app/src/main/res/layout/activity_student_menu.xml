@@ -8,16 +8,6 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.StudentMenuActivity">
 
-    <!-- botón atrás -->
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="12dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_arrow_back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
     <!-- botón menú  -->
 
     <ImageButton
@@ -41,8 +31,7 @@
         android:contentDescription="Logo DaVinci Connect"
         android:src="@drawable/logo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.372"
-        app:layout_constraintStart_toEndOf="@id/btnBack"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
