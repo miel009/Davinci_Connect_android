@@ -39,6 +39,7 @@ public class TemariosActivity extends AppCompatActivity implements FolderAdapter
     public void onFolderClick(Folder folder) {
         Intent intent = new Intent(this, FileListActivity.class);
         intent.putExtra("FOLDER_NAME", folder.getName());
+        intent.putExtra("IS_SHARED", true);
         startActivity(intent);
     }
 }

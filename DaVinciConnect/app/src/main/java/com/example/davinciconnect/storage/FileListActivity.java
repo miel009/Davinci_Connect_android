@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.InputType;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,18 +46,26 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
         setContentView(R.layout.activity_file_list);
 
         initialFolderName = getIntent().getStringExtra("FOLDER_NAME");
+        boolean isStudent = getIntent().getBooleanExtra("IS_STUDENT", false);
+        boolean isShared = getIntent().getBooleanExtra("IS_SHARED", false);
+
         if (initialFolderName == null) {
             initialFolderName = "Archivos";
         }
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            Toast.makeText(this, "Usuario no autenticado.", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+        if (isShared) {
+            rootReference = FirebaseStorage.getInstance("gs://davinciconnect-4817d.firebasestorage.app").getReference("materias");
+        } else {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                Toast.makeText(this, "Usuario no autenticado.", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            String userId = currentUser.getUid();
+            rootReference = FirebaseStorage.getInstance("gs://davinciconnect-4817d.firebasestorage.app").getReference("users").child(userId);
         }
-        String userId = currentUser.getUid();
-        rootReference = FirebaseStorage.getInstance("gs://davinciconnect-4817d.firebasestorage.app").getReference("users").child(userId);
+
         currentPathReference = rootReference.child(initialFolderName);
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -66,6 +75,9 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
         recyclerView.setAdapter(fileAdapter);
 
         Button uploadButton = findViewById(R.id.uploadButton);
+        if (isStudent) {
+            uploadButton.setVisibility(View.GONE);
+        }
         uploadButton.setOnClickListener(v -> openFileChooser());
 
         loadItems();
