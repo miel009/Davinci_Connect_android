@@ -1,51 +1,55 @@
 package com.example.davinciconnect.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.davinciconnect.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editEmail, editPassword;
     private Button btnLogin;
-    private TextView tvGoRegister;
+    private TextView tvRegister;
+    private ImageView imageHeader;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-
-    private String selectedRole; // "student" o "teacher"
+    private String selectedRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeManager.applyTheme(this);
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+
+        selectedRole = getIntent().getStringExtra(RoleSelectionActivity.EXTRA_ROLE);
 
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        tvGoRegister = findViewById(R.id.tvRegister);
+        tvRegister = findViewById(R.id.tvRegister);
+        imageHeader = findViewById(R.id.image_header);
 
-        // Rol recibido desde la pantalla anterior
-        selectedRole = getIntent().getStringExtra(RoleSelectionActivity.EXTRA_ROLE);
+        // Set the header image based on the role
+        if ("teacher".equals(selectedRole)) {
+            imageHeader.setImageResource(R.drawable.profesor);
+        } else {
+            imageHeader.setImageResource(R.drawable.alumnos);
+        }
 
         btnLogin.setOnClickListener(v -> loginUser());
 
-        tvGoRegister.setOnClickListener(v -> {
-            Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
-            i.putExtra(RoleSelectionActivity.EXTRA_ROLE, selectedRole);
-            startActivity(i);
+        tvRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            intent.putExtra(RoleSelectionActivity.EXTRA_ROLE, selectedRole);
+            startActivity(intent);
         });
     }
 
@@ -61,38 +65,16 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        // tras login, consultamos Firestore para saber el rol real del usuario
-                        String uid = mAuth.getCurrentUser().getUid();
-                        db.collection("users").document(uid).get()
-                                .addOnSuccessListener(this::routeByRole)
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(this, "Error obteniendo usuario", Toast.LENGTH_SHORT).show());
+                        // Navigate to the corresponding menu based on the role
+                        if ("teacher".equals(selectedRole)) {
+                            startActivity(new Intent(this, TeacherMenuActivity.class));
+                        } else {
+                            startActivity(new Intent(this, StudentMenuActivity.class));
+                        }
+                        finish();
                     } else {
-                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Error en el inicio de sesión: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
-    }
-
-    private void routeByRole(DocumentSnapshot doc){
-        if (!doc.exists()) {
-            Toast.makeText(this, "Perfil no encontrado. Completa el registro.", Toast.LENGTH_LONG).show();
-            // Si el usuario no tiene documento, lo mandamos a registro con el rol seleccionado
-            Intent i = new Intent(this, RegisterActivity.class);
-            i.putExtra(RoleSelectionActivity.EXTRA_ROLE, selectedRole);
-            startActivity(i);
-            finish();
-            return;
-        }
-
-        String role = doc.getString("role"); // "student" o "teacher"
-        if ("teacher".equals(role)) {
-            startActivity(new Intent(this, TeacherMenuActivity.class));
-        } else if ("student".equals(role)) {
-            startActivity(new Intent(this, StudentMenuActivity.class));
-        } else {
-            Toast.makeText(this, "Rol no válido. Contacta al admin.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        finish();
     }
 }
