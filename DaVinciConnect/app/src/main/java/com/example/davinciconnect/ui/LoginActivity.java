@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.davinciconnect.R;
@@ -15,7 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editEmail, editPassword;
-    private Button btnLogin, btnGoRegister;
+    private Button btnLogin;
+    private TextView tvGoRegister;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -33,14 +35,14 @@ public class LoginActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        btnGoRegister = findViewById(R.id.btnRegister);
+        tvGoRegister = findViewById(R.id.tvRegister);
 
         // Rol recibido desde la pantalla anterior
         selectedRole = getIntent().getStringExtra(RoleSelectionActivity.EXTRA_ROLE);
 
         btnLogin.setOnClickListener(v -> loginUser());
 
-        btnGoRegister.setOnClickListener(v -> {
+        tvGoRegister.setOnClickListener(v -> {
             Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
             i.putExtra(RoleSelectionActivity.EXTRA_ROLE, selectedRole);
             startActivity(i);
