@@ -41,7 +41,7 @@ public class CampusActivity extends AppCompatActivity implements FolderAdapter.O
                 intent = new Intent(this, AsignaturasActivity.class);
                 break;
             case "Control Escolar":
-                intent = new Intent(this, ControlEscolarMateriasActivity.class);
+                intent = new Intent(this, StudentAttendanceStatusActivity.class);
                 break;
             case "Credenciales":
                 intent = new Intent(this, StaticPageActivity.class);

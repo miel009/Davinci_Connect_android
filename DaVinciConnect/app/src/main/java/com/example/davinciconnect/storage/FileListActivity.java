@@ -6,7 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.text.InputType;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,7 +39,9 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
     private RecyclerView recyclerView;
     private FileAdapter fileAdapter;
     private List<StorageReference> itemList;
+    private List<StorageReference> filteredList;
     private String initialFolderName;
+    private EditText searchEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,27 +74,60 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         itemList = new ArrayList<>();
-        fileAdapter = new FileAdapter(itemList, this);
+        filteredList = new ArrayList<>();
+        fileAdapter = new FileAdapter(filteredList, this);
         recyclerView.setAdapter(fileAdapter);
+
+        searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         Button uploadButton = findViewById(R.id.uploadButton);
         if (isStudent) {
             uploadButton.setVisibility(View.GONE);
+        } else {
+            uploadButton.setVisibility(View.VISIBLE);
         }
         uploadButton.setOnClickListener(v -> openFileChooser());
 
         loadItems();
     }
 
+    private void filter(String text) {
+        filteredList.clear();
+        if (text.isEmpty()) {
+            filteredList.addAll(itemList);
+        } else {
+            text = text.toLowerCase();
+            for (StorageReference item : itemList) {
+                if (item.getName().toLowerCase().contains(text)) {
+                    filteredList.add(item);
+                }
+            }
+        }
+        fileAdapter.notifyDataSetChanged();
+    }
+
+
     private void loadItems() {
         currentPathReference.listAll().addOnSuccessListener(listResult -> {
             itemList.clear();
             itemList.addAll(listResult.getPrefixes());
             itemList.addAll(listResult.getItems());
-            fileAdapter.notifyDataSetChanged();
+            filter(searchEditText.getText().toString());
         }).addOnFailureListener(e -> {
              itemList.clear();
-             fileAdapter.notifyDataSetChanged();
+             filter("");
         });
     }
 

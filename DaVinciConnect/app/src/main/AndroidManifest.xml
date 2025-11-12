@@ -51,7 +51,7 @@
         <activity android:name=".ui.StudentMenuActivity" android:exported="false" />
         <activity android:name=".ui.chat.ChatLeoActivity" android:exported="false" />
         <activity android:name=".storage.StorageActivity" android:exported="false" />
-        <activity android:name=".storage.FileListActivity" android:exported="false" />
+        <activity android:name=".storage.FileListActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".storage.SearchActivity" android:exported="false" />
         <activity android:name=".ui.CalendarActivity" android:exported="false" />
         <activity android:name=".ui.InstitutionalActivity" android:exported="false" />
@@ -66,6 +66,7 @@
         <activity android:name=".ui.OrdenPagoActivity" android:exported="false" />
         <activity android:name=".ui.CampusTeacherActivity" android:exported="false" />
         <activity android:name=".ui.StudentAttendanceActivity" android:exported="false" />
+        <activity android:name=".ui.StudentAttendanceStatusActivity" android:exported="false" />
         <activity android:name=".ui.ControlEscolarMateriasActivity" android:exported="false" />
         <activity android:name=".ui.TutoriasActivity" android:exported="false" />
         <activity android:name=".ui.VideotutoriasActivity" android:exported="false" />
