@@ -1,19 +1,21 @@
 package com.example.davinciconnect.ui;
 
+import java.util.List;
+
 public class Calificacion {
-    private String materia;
-    private String nota;
+    private String subject;
+    private List<Integer> grades;
 
-    public Calificacion(String materia, String nota) {
-        this.materia = materia;
-        this.nota = nota;
+    public Calificacion(String subject, List<Integer> grades) {
+        this.subject = subject;
+        this.grades = grades;
     }
 
-    public String getMateria() {
-        return materia;
+    public String getSubject() {
+        return subject;
     }
 
-    public String getNota() {
-        return nota;
+    public List<Integer> getGrades() {
+        return grades;
     }
 }
