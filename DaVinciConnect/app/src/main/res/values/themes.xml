@@ -17,4 +17,9 @@
         <item name="android:textColorPrimary">@android:color/white</item> <!-- Title color -->
         <item name="android:textColor">#E0E0E0</item> <!-- Body text color -->
     </style>
+
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:background">#333333</item> <!-- Dark background -->
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 </resources>
