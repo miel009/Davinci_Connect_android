@@ -165,7 +165,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
         });
 
         popupView.findViewById(R.id.menu_contact).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/davinciconnect/"));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/dvconnectapp/"));
             startActivity(intent);
             popupWindow.dismiss();
         });
