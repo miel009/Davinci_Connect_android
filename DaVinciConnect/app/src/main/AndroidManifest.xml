@@ -72,7 +72,9 @@
         <activity android:name=".ui.VideotutoriasActivity" android:exported="false" />
         <activity android:name=".ui.CapacitacionesActivity" android:exported="false" />
         <activity android:name=".ui.CapacitacionListActivity" android:exported="false" />
-        <activity android:name=".ui.ProfileActivity" android:exported="false" /> <!-- Nueva Actividad -->
+        <activity android:name=".ui.ProfileActivity" android:exported="false" />
+        <activity android:name=".ui.PendingApprovalActivity" />
+        <!-- Nueva Actividad -->
 
         <activity
             android:name=".ui.SplashActivity"

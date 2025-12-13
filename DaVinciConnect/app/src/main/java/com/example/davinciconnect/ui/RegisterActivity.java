@@ -90,30 +90,47 @@ public class RegisterActivity extends AppCompatActivity {
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        String uid = mAuth.getCurrentUser().getUid();
-                        Map<String, Object> user = new HashMap<>();
-                        user.put("name", name);
-                        user.put("email", email);
-                        user.put("role", selectedRole); // 👈 guardamos el rol
-                        user.put("createdAt", System.currentTimeMillis());
-
-                        db.collection("users").document(uid).set(user)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show();
-                                    // Enruta según el rol
-                                    if ("teacher".equals(selectedRole)) {
-                                        startActivity(new Intent(this, TeacherMenuActivity.class));
-                                    } else {
-                                        startActivity(new Intent(this, StudentMenuActivity.class));
-                                    }
-                                    finish();
-                                })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(this, "Error guardando usuario", Toast.LENGTH_SHORT).show());
-                    } else {
+                    if (!task.isSuccessful()) {
                         Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        return;
                     }
+                    String uid = mAuth.getCurrentUser().getUid();
+
+                    Map<String, Object> user = new HashMap<>();
+                    user.put("name", name);
+                    user.put("email", email);
+                    user.put("role", selectedRole);
+                    user.put("createdAt", System.currentTimeMillis());
+                    user.put("approved", false);
+                    user.put("status", "pending");
+
+                    // guardar usuario
+                    db.collection("users").document(uid).set(user)
+                            .addOnSuccessListener(aVoid -> {
+                                // guardar solicitud
+                                Map<String, Object> sol = new HashMap<>();
+                                sol.put("uid", uid);
+                                sol.put("email", email);
+                                sol.put("role", selectedRole);
+                                sol.put("createdAt", System.currentTimeMillis());
+                                sol.put("status", "pending");
+
+                                db.collection("solicitudes").document(uid).set(sol)
+                                        .addOnSuccessListener(v -> {
+                                            Toast.makeText(this, "Cuenta creada. Esperando aprobación.", Toast.LENGTH_SHORT).show();
+                                            // cerrar sesión para que no entre
+                                            mAuth.signOut();
+                                            //  enviar a pantalla “pendiente”
+                                            startActivity(new Intent(this, PendingApprovalActivity.class));
+                                            finish();
+                                        })
+                                        .addOnFailureListener(e ->
+                                                Toast.makeText(this, "Error creando solicitud", Toast.LENGTH_SHORT).show()
+                                        );
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Error guardando usuario", Toast.LENGTH_SHORT).show()
+                            );
                 });
-    }
+}
 }

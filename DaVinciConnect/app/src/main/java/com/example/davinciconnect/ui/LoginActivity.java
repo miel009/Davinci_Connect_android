@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.davinciconnect.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -19,7 +20,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private TextView tvRegister;
     private ImageView imageHeader;
+
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
     private String selectedRole;
 
     @Override
@@ -28,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         selectedRole = getIntent().getStringExtra(RoleSelectionActivity.EXTRA_ROLE);
 
@@ -37,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
         tvRegister = findViewById(R.id.tvRegister);
         imageHeader = findViewById(R.id.image_header);
 
-        // Set the header image based on the role
         if ("teacher".equals(selectedRole)) {
             imageHeader.setImageResource(R.drawable.profesor);
         } else {
@@ -64,17 +68,79 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Navigate to the corresponding menu based on the role
-                        if ("teacher".equals(selectedRole)) {
-                            startActivity(new Intent(this, TeacherMenuActivity.class));
-                        } else {
-                            startActivity(new Intent(this, StudentMenuActivity.class));
+                    if (!task.isSuccessful()) {
+
+                        String msg = "Error al iniciar sesión.";
+                        String err = (task.getException() != null) ? task.getException().getMessage() : null;
+
+                        if (err != null) {
+                            if (err.contains("no user record") || err.contains("user may have been deleted")) {
+                                msg = "La cuenta no existe. Registrate para continuar.";
+                            } else if (err.contains("password is invalid")) {
+                                msg = "La contraseña es incorrecta.";
+                            } else if (err.contains("email address is badly formatted")) {
+                                msg = "El email ingresado no es válido.";
+                            } else if (err.contains("The supplied auth credential is incorrect")) {
+                                msg = "Email o contraseña incorrectos.";
+                            }
                         }
-                        finish();
-                    } else {
-                        Toast.makeText(this, "Error en el inicio de sesión: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+
+                        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                        return;
                     }
+
+                    // Login OK → ahora verif Firestore (approved)
+                    verificarEstadoUsuario();
+                });
+    }
+
+    private void verificarEstadoUsuario() {
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(this, "Sesión inválida. Intenta nuevamente.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String uid = mAuth.getCurrentUser().getUid();
+
+        db.collection("users").document(uid).get()
+                .addOnSuccessListener(doc -> {
+
+                    // no existe perfil en Firestore
+                    if (!doc.exists()) {
+                        mAuth.signOut();
+                        Toast.makeText(
+                                this,
+                                "La cuenta no existe o el registro no se completó. Volvé a registrarte.",
+                                Toast.LENGTH_LONG
+                        ).show();
+                        startActivity(new Intent(this, RoleSelectionActivity.class));
+                        finish();
+                        return;
+                    }
+
+                    Boolean approved = doc.getBoolean("approved");
+                    String roleFromDb = doc.getString("role");
+
+                    // pendiente
+                    if (approved == null || !approved) {
+                        mAuth.signOut();
+                        Toast.makeText(this, "Cuenta pendiente de aprobación.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, PendingApprovalActivity.class));
+                        finish();
+                        return;
+                    }
+
+                    //  aprobado → entrar según rol real
+                    if ("teacher".equals(roleFromDb)) {
+                        startActivity(new Intent(this, TeacherMenuActivity.class));
+                    } else {
+                        startActivity(new Intent(this, StudentMenuActivity.class));
+                    }
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    mAuth.signOut();
+                    Toast.makeText(this, "Error verificando acceso: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 }
