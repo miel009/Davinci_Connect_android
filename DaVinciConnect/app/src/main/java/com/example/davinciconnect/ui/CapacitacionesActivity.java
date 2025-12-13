@@ -3,7 +3,7 @@ package com.example.davinciconnect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.Folder;
@@ -19,16 +19,16 @@ public class CapacitacionesActivity extends AppCompatActivity implements FolderA
         setContentView(R.layout.activity_capacitaciones);
 
         RecyclerView rvCapacitaciones = findViewById(R.id.rvCapacitaciones);
-        rvCapacitaciones.setLayoutManager(new LinearLayoutManager(this));
+        rvCapacitaciones.setLayoutManager(new GridLayoutManager(this, 2));
 
         List<Folder> capacitacionesList = new ArrayList<>();
-        capacitacionesList.add(new Folder("Materia 1ABC", R.drawable.ic_launcher_foreground));
-        capacitacionesList.add(new Folder("Materia 2ABC", R.drawable.ic_launcher_foreground));
-        capacitacionesList.add(new Folder("Materia 3ABC", R.drawable.ic_launcher_foreground));
-        capacitacionesList.add(new Folder("Materia 4ABC", R.drawable.ic_launcher_foreground));
-        capacitacionesList.add(new Folder("Materia 5ABC", R.drawable.ic_launcher_foreground));
-        capacitacionesList.add(new Folder("Materia 6ABC", R.drawable.ic_launcher_foreground));
-        capacitacionesList.add(new Folder("Materia 7ABC", R.drawable.ic_launcher_foreground));
+        capacitacionesList.add(new Folder("Materia 1ABC", R.drawable.materia_1abc));
+        capacitacionesList.add(new Folder("Materia 2ABC", R.drawable.materia_2abc));
+        capacitacionesList.add(new Folder("Materia 3ABC", R.drawable.materia_3abc));
+        capacitacionesList.add(new Folder("Materia 4ABC", R.drawable.materia_4abc));
+        capacitacionesList.add(new Folder("Materia 5ABC", R.drawable.materia_5abc));
+        capacitacionesList.add(new Folder("Materia 6ABC", R.drawable.materia_6abc));
+        capacitacionesList.add(new Folder("Materia 7ABC", R.drawable.materia_7abc));
 
         FolderAdapter adapter = new FolderAdapter(capacitacionesList, this);
         rvCapacitaciones.setAdapter(adapter);

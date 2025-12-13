@@ -3,7 +3,7 @@ package com.example.davinciconnect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.Folder;
@@ -19,7 +19,7 @@ public class CampusTeacherActivity extends AppCompatActivity implements FolderAd
         setContentView(R.layout.activity_campus_teacher);
 
         RecyclerView rvCampusTeacher = findViewById(R.id.rvCampusTeacher);
-        rvCampusTeacher.setLayoutManager(new LinearLayoutManager(this));
+        rvCampusTeacher.setLayoutManager(new GridLayoutManager(this, 2));
 
         List<Folder> campusList = new ArrayList<>();
         campusList.add(new Folder("Campus Virtual", R.drawable.campus_virtual));

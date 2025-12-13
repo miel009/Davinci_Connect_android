@@ -3,7 +3,7 @@ package com.example.davinciconnect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.Folder;
@@ -19,14 +19,14 @@ public class InstitutionalActivity extends AppCompatActivity implements FolderAd
         setContentView(R.layout.activity_institutional);
 
         RecyclerView rvFolders = findViewById(R.id.rvInstitutionalFolders);
-        rvFolders.setLayoutManager(new LinearLayoutManager(this));
+        rvFolders.setLayoutManager(new GridLayoutManager(this, 2));
 
         List<Folder> folderList = new ArrayList<>();
-        folderList.add(new Folder("Institución", R.drawable.ic_launcher_foreground));
-        folderList.add(new Folder("Autoridades", R.drawable.ic_launcher_foreground));
-        folderList.add(new Folder("Consejo Directivo", R.drawable.ic_launcher_foreground));
-        folderList.add(new Folder("Departamentos", R.drawable.ic_launcher_foreground));
-        folderList.add(new Folder("Programas", R.drawable.ic_launcher_foreground));
+        folderList.add(new Folder("Institución", R.drawable.institucion));
+        folderList.add(new Folder("Autoridades", R.drawable.autoridades));
+        folderList.add(new Folder("Consejo Directivo", R.drawable.consejo_directivo));
+        folderList.add(new Folder("Departamentos", R.drawable.departamentos));
+        folderList.add(new Folder("Programas", R.drawable.programas));
 
         FolderAdapter adapter = new FolderAdapter(folderList, this);
         rvFolders.setAdapter(adapter);

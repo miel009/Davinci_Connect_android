@@ -47,11 +47,11 @@
             android:stopWithTask="false" />
 
         <activity android:name=".ui.ChatIntroActivity" android:exported="false" />
-        <activity android:name=".ui.TeacherMenuActivity" android:exported="false" />
-        <activity android:name=".ui.StudentMenuActivity" android:exported="false" />
+        <activity android:name=".ui.TeacherMenuActivity" android:exported="false" android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".ui.StudentMenuActivity" android:exported="false" android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ui.chat.ChatLeoActivity" android:exported="false" />
         <activity android:name=".storage.StorageActivity" android:exported="false" />
-        <activity android:name=".storage.FileListActivity" android:exported="false" />
+        <activity android:name=".storage.FileListActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".storage.SearchActivity" android:exported="false" />
         <activity android:name=".ui.CalendarActivity" android:exported="false" />
         <activity android:name=".ui.InstitutionalActivity" android:exported="false" />
@@ -61,11 +61,12 @@
         <activity android:name=".ui.AsignaturasActivity" android:exported="false" />
         <activity android:name=".ui.CalificacionesActivity" android:exported="false" />
         <activity android:name=".ui.CampusActivity" android:exported="false" />
-        <activity android:name=".ui.ControlEscolarActivity" android:exported="false" />
+        <activity android:name=".ui.ControlEscolarActivity" android.exported="false" />
         <activity android:name=".ui.CorreoActivity" android:exported="false" />
         <activity android:name=".ui.OrdenPagoActivity" android:exported="false" />
         <activity android:name=".ui.CampusTeacherActivity" android:exported="false" />
         <activity android:name=".ui.StudentAttendanceActivity" android:exported="false" />
+        <activity android:name=".ui.StudentAttendanceStatusActivity" android:exported="false" />
         <activity android:name=".ui.ControlEscolarMateriasActivity" android:exported="false" />
         <activity android:name=".ui.TutoriasActivity" android:exported="false" />
         <activity android:name=".ui.VideotutoriasActivity" android:exported="false" />

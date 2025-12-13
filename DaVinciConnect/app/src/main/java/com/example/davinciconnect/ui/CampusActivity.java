@@ -3,7 +3,7 @@ package com.example.davinciconnect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.Folder;
@@ -19,7 +19,7 @@ public class CampusActivity extends AppCompatActivity implements FolderAdapter.O
         setContentView(R.layout.activity_campus);
 
         RecyclerView rvCampus = findViewById(R.id.rvCampus);
-        rvCampus.setLayoutManager(new LinearLayoutManager(this));
+        rvCampus.setLayoutManager(new GridLayoutManager(this, 2));
 
         List<Folder> campusList = new ArrayList<>();
         campusList.add(new Folder("Campus Virtual", R.drawable.campus_virtual));
@@ -41,7 +41,7 @@ public class CampusActivity extends AppCompatActivity implements FolderAdapter.O
                 intent = new Intent(this, AsignaturasActivity.class);
                 break;
             case "Control Escolar":
-                intent = new Intent(this, ControlEscolarActivity.class);
+                intent = new Intent(this, StudentAttendanceStatusActivity.class);
                 break;
             case "Credenciales":
                 intent = new Intent(this, StaticPageActivity.class);

@@ -1,5 +1,6 @@
 package com.example.davinciconnect.storage;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.google.firebase.storage.StorageReference;
@@ -71,7 +73,8 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void showPopupMenu(View view, StorageReference itemRef, boolean isFolder) {
-        PopupMenu popup = new PopupMenu(view.getContext(), view);
+        Context wrapper = new ContextThemeWrapper(view.getContext(), R.style.CustomPopupMenu);
+        PopupMenu popup = new PopupMenu(wrapper, view);
         popup.getMenuInflater().inflate(R.menu.file_options_menu, popup.getMenu());
         popup.getMenu().findItem(R.id.action_send).setVisible(!isFolder);
 

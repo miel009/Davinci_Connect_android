@@ -6,7 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.text.InputType;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,7 +39,9 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
     private RecyclerView recyclerView;
     private FileAdapter fileAdapter;
     private List<StorageReference> itemList;
+    private List<StorageReference> filteredList;
     private String initialFolderName;
+    private EditText searchEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
         }
 
         if (isShared) {
-            rootReference = FirebaseStorage.getInstance("gs://davinciconnect-4817d.firebasestorage.app").getReference("materias");
+            rootReference = FirebaseStorage.getInstance().getReference("materias");
         } else {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser == null) {
@@ -63,7 +66,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
                 return;
             }
             String userId = currentUser.getUid();
-            rootReference = FirebaseStorage.getInstance("gs://davinciconnect-4817d.firebasestorage.app").getReference("users").child(userId);
+            rootReference = FirebaseStorage.getInstance().getReference("users").child(userId);
         }
 
         currentPathReference = rootReference.child(initialFolderName);
@@ -71,27 +74,61 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         itemList = new ArrayList<>();
-        fileAdapter = new FileAdapter(itemList, this);
+        filteredList = new ArrayList<>();
+        fileAdapter = new FileAdapter(filteredList, this);
         recyclerView.setAdapter(fileAdapter);
+
+        searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         Button uploadButton = findViewById(R.id.uploadButton);
         if (isStudent) {
             uploadButton.setVisibility(View.GONE);
+        } else {
+            uploadButton.setVisibility(View.VISIBLE);
         }
         uploadButton.setOnClickListener(v -> openFileChooser());
 
         loadItems();
     }
 
+    private void filter(String text) {
+        filteredList.clear();
+        if (text.isEmpty()) {
+            filteredList.addAll(itemList);
+        } else {
+            text = text.toLowerCase();
+            for (StorageReference item : itemList) {
+                if (item.getName().toLowerCase().contains(text)) {
+                    filteredList.add(item);
+                }
+            }
+        }
+        fileAdapter.notifyDataSetChanged();
+    }
+
+
     private void loadItems() {
         currentPathReference.listAll().addOnSuccessListener(listResult -> {
             itemList.clear();
             itemList.addAll(listResult.getPrefixes());
             itemList.addAll(listResult.getItems());
-            fileAdapter.notifyDataSetChanged();
+            filter(searchEditText.getText().toString());
         }).addOnFailureListener(e -> {
+             Toast.makeText(this, "Error al cargar archivos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
              itemList.clear();
-             fileAdapter.notifyDataSetChanged();
+             filter("");
         });
     }
 
@@ -126,9 +163,9 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
                     itemToMove.delete().addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Movido a " + destinationFolderName, Toast.LENGTH_SHORT).show();
                         loadItems();
-                    });
-                });
-            });
+                    }).addOnFailureListener(e -> Toast.makeText(this, "Error al mover: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }).addOnFailureListener(e -> Toast.makeText(this, "Error al mover: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }).addOnFailureListener(e -> Toast.makeText(this, "Error al mover: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });
         builder.show();
     }
@@ -155,9 +192,9 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
                     itemRef.delete().addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Archivo renombrado", Toast.LENGTH_SHORT).show();
                         loadItems();
-                    });
-                });
-            });
+                    }).addOnFailureListener(e -> Toast.makeText(this, "Error al renombrar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }).addOnFailureListener(e -> Toast.makeText(this, "Error al renombrar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }).addOnFailureListener(e -> Toast.makeText(this, "Error al renombrar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });
         builder.setNegativeButton("Cancelar", null);
         builder.show();
@@ -172,7 +209,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
                 itemRef.delete().addOnSuccessListener(aVoid -> {
                     Toast.makeText(FileListActivity.this, "Elemento eliminado", Toast.LENGTH_SHORT).show();
                     loadItems();
-                });
+                }).addOnFailureListener(e -> Toast.makeText(this, "Error al eliminar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             })
             .setNegativeButton("Cancelar", null)
             .show();
@@ -189,7 +226,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
                 shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivity(Intent.createChooser(shareIntent, "Enviar archivo vía..."));
-            });
+            }).addOnFailureListener(e -> Toast.makeText(this, "Error al enviar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         } catch (Exception e) {
             Log.e(TAG, "Error creating temp file for sharing", e);
         }
@@ -200,7 +237,7 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
         fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
-        });
+        }).addOnFailureListener(e -> Toast.makeText(this, "Error al abrir: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
     
     private void openFileChooser() {
@@ -249,6 +286,6 @@ public class FileListActivity extends AppCompatActivity implements FileAdapter.O
         fileReference.putFile(fileUri).addOnSuccessListener(taskSnapshot -> {
             Toast.makeText(FileListActivity.this, "Archivo subido con éxito", Toast.LENGTH_SHORT).show();
             loadItems();
-        });
+        }).addOnFailureListener(e -> Toast.makeText(this, "Error al subir: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

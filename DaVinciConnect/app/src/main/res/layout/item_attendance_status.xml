@@ -2,21 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
+    android:orientation="horizontal"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvAsunto"
-        android:layout_width="wrap_content"
+        android:id="@+id/subjectTextView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="Asunto del correo" />
+        android:layout_weight="1"
+        android:text="Materia"
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tvRemitente"
+        android:id="@+id/statusTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="remitente@example.com" />
+        android:text="Estado"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

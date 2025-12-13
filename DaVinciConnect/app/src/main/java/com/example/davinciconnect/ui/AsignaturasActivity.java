@@ -3,7 +3,7 @@ package com.example.davinciconnect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.davinciconnect.R;
 import com.example.davinciconnect.storage.Folder;
@@ -20,7 +20,7 @@ public class AsignaturasActivity extends AppCompatActivity implements FolderAdap
         setContentView(R.layout.activity_asignaturas);
 
         RecyclerView rvAsignaturas = findViewById(R.id.rvAsignaturas);
-        rvAsignaturas.setLayoutManager(new LinearLayoutManager(this));
+        rvAsignaturas.setLayoutManager(new GridLayoutManager(this, 2));
 
         List<Folder> asignaturasList = new ArrayList<>();
         asignaturasList.add(new Folder("Materia 1ABC", R.drawable.materia_1abc));

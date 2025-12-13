@@ -1,23 +1,17 @@
 package com.example.davinciconnect.ui;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,8 +45,10 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
     private RecyclerView rvMenu;
     private FileAdapter searchAdapter;
     private MenuAdapter menuAdapter;
+    private List<MenuItemModel> mainMenuItems;
     private List<StorageReference> searchResults;
     private StorageReference userRootRef;
+    private StorageReference sharedRootRef;
     private EditText etSearch;
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -79,21 +75,18 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
         if (currentUser != null) {
             userRootRef = FirebaseStorage.getInstance().getReference("users").child(currentUser.getUid());
         }
+        sharedRootRef = FirebaseStorage.getInstance("gs://davinciconnect-4817d.firebasestorage.app").getReference("materias");
 
         etSearch = findViewById(R.id.etSearch);
-        ImageButton btnSearch = findViewById(R.id.btnSearch);
-        btnSearch.setOnClickListener(v -> performSearch(etSearch.getText().toString()));
-        
         setupSearch();
 
-        ImageButton btnMenu = findViewById(R.id.btnMenu);
-        btnMenu.setOnClickListener(this::showCustomMenu);
+        findViewById(R.id.btnMenu).setOnClickListener(this::showCustomMenu);
     }
 
     private void setupSearch() {
         searchResults = new ArrayList<>();
         searchAdapter = new FileAdapter(searchResults, this);
-        
+
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -111,7 +104,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
             public void afterTextChanged(Editable s) {}
         });
     }
-    
+
     private void restoreMainMenu() {
         rvMenu.setLayoutManager(new GridLayoutManager(this, 2));
         rvMenu.setAdapter(menuAdapter);
@@ -121,16 +114,14 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
         rvMenu.setLayoutManager(new LinearLayoutManager(this));
         rvMenu.setAdapter(searchAdapter);
         searchResults.clear();
+
+        if (userRootRef != null) {
+            searchInFolder(userRootRef, query);
+        }
         
-        if (userRootRef == null) return;
-        
-        userRootRef.listAll().addOnSuccessListener(listResult -> {
-            for (StorageReference folderRef : listResult.getPrefixes()) {
-                if (!folderRef.getName().equals("Privado")) {
-                    searchInFolder(folderRef, query);
-                }
-            }
-        });
+        if (sharedRootRef != null) {
+            searchInFolder(sharedRootRef, query);
+        }
     }
 
     private void searchInFolder(StorageReference folderRef, String query) {
@@ -141,10 +132,9 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
                 }
             }
             for (StorageReference subFolderRef : listResult.getPrefixes()) {
-                if (subFolderRef.getName().toLowerCase().contains(query.toLowerCase())) {
-                    searchResults.add(subFolderRef);
+                if (!subFolderRef.getName().equals("Privado")) {
+                    searchInFolder(subFolderRef, query);
                 }
-                searchInFolder(subFolderRef, query);
             }
             searchAdapter.notifyDataSetChanged();
         });
@@ -175,7 +165,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
         });
 
         popupView.findViewById(R.id.menu_contact).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/davinciconnect/"));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/dvconnectapp/"));
             startActivity(intent);
             popupWindow.dismiss();
         });
@@ -280,7 +270,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
         rvMenu = findViewById(R.id.rvMenu);
         rvMenu.setLayoutManager(new GridLayoutManager(this, 2));
         rvMenu.setHasFixedSize(true);
-        List<MenuItemModel> items = Arrays.asList(
+        mainMenuItems = Arrays.asList(
             new MenuItemModel(R.drawable.documentos, "Documentos"),
             new MenuItemModel(R.drawable.campus, "Campus"),
             new MenuItemModel(R.drawable.asignaturas, "Asignaturas"),
@@ -300,7 +290,7 @@ public class StudentMenuActivity extends AppCompatActivity implements FileAdapte
                 default: CustomToast.show(this, "Alumno → " + item.label, Toast.LENGTH_SHORT);
             }
         });
-        menuAdapter.submit(items);
+        menuAdapter.submit(mainMenuItems);
         rvMenu.setAdapter(menuAdapter);
     }
 
